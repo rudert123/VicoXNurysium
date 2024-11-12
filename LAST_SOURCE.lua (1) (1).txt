@@ -379,7 +379,7 @@ function AutoParry.perform_parry()
 		direction = CFrame.new(camera_direction, target_position + Vector3.new(0, 60, 0))
 
 		ball_properties.parry_remote:FireServer(
-			0,
+			0.5,
 			direction,
 			{ [AutoParry.target.aim.Name] = target_position },
 			{ target_position.X, target_position.Y },
@@ -396,7 +396,7 @@ function AutoParry.perform_parry()
 	end
 
 	ball_properties.parry_remote:FireServer(
-		0,
+		0.5,
 		direction,
 		{ [AutoParry.target.aim.Name] = target_position },
 		{ target_position.X, target_position.Y },
@@ -832,11 +832,10 @@ do
     -- Toggle for auto parry rotation
     AutoSection:NewToggle({
         Title = "Rotation",
-        Default = false,  -- Nilai default toggle (false = nonaktif, true = aktif)
-        Callback = function(tr)
-            -- Mengubah nilai interface.flags['auto_parry'] berdasarkan status toggle
-            interface.flags['auto_parry'] = tr  -- tr adalah nilai boolean (true/false)
-            print("Auto Parry Rotation/parry:", tr)
+        Default = false,
+        Callback = function(state)
+        auto_parry_rotation_enabled = state
+            print("Auto Parry Rotation:", tr)
         end
     })
 
@@ -847,6 +846,7 @@ do
         Max = 10,
         Default = 5,
         Callback = function(value)
+            auto_parry_rotation_acuity_value = value
             print("Auto Parry Rotation Acuity:", value)
         end
     })
@@ -857,6 +857,7 @@ do
         Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
         Default = "Linear",
         Callback = function(selected)
+            current_curve = selected
             print("Selected Curve Method:", selected)
         end
     })
