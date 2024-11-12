@@ -23,9 +23,9 @@ local crypter = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Egor
 local notify = NothingLibrary.Notification();
 
 notify.new({
-        Title = "VicoX Is Fetch.",
-	Description = "welcome to Vico script i hope you like it",
-	Duration = 5,
+        Title = "...VicoX Is Fetch...",
+	Description = "welcome to Vico script i hope you like it 😋",
+	Duration = 10,
 	Icon = "rbxassetid://8997385628"
 })
 
@@ -281,8 +281,8 @@ function AutoParry.get_parry_remote()
 			return
 		end
 
-		if not temp_remote.Name:find('\n') then
-		       continue
+		if not temp_remote.Name:find('\n\n') then
+		       return
 		end
 
 		AutoParry.ball.properties.parry_remote = temp_remote
