@@ -281,7 +281,7 @@ function AutoParry.get_parry_remote()
 			return
 		end
 
-		if not temp_remote.Name:find('\n\n\n\n\n') then
+		if not temp_remote.Name:find('\n') then
 			return
 		end
 
