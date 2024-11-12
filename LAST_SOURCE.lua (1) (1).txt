@@ -25,7 +25,7 @@ local notify = NothingLibrary.Notification();
 notify.new({
         Title = "...VicoX Is Fetch...",
 	Description = "welcome to Vico script i hope you like it 😋",
-	Duration = 10,
+	Duration = 6,
 	Icon = "rbxassetid://8997385628"
 })
 
@@ -274,14 +274,15 @@ function Player:get_closest_player_to_cursor()
 end
 
 function AutoParry.get_parry_remote()
-	for _, object in { cloneref(game:GetService('VirtualUser')) }  do
+	for _, object in {
+game:GetService('VirtualUser') }  do
 		local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
 
 		if not temp_remote then
 			return
 		end
 
-		if not temp_remote.Name:find('\n\n') then
+		if not temp_remote.Name:find('\n') then
 		       return
 		end
 
