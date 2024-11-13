@@ -2257,9 +2257,9 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
         return
     end
 
-    if not AutoParry.ball.ball_entity then
-        return
-    end
+    if not AutoParry.ball.ball_entity and not AutoParry.ball.training_ball_entity then
+    return
+end
 
 	local ball_properties = AutoParry.ball.properties
 
