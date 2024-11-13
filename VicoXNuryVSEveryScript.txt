@@ -24,7 +24,7 @@ local notify = NothingLibrary.Notification();
 
 notify.new({
         Title = "...VicoX Is Fetch...",
-	Description = "welcome to Vico script i hope you like it 😋..",
+	Description = "welcome to Vico script i hope you like it 😋..!",
 	Duration = 6,
 	Icon = "rbxassetid://8997385628"
 })
@@ -2319,11 +2319,11 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 		return
 	end
 
-	local ball = AutoParry.get_ball() or AutoParry.get_training_ball()
+	local ball = AutoParry.get_ball()
 
-if not ball then
-	return
-end
+	if not ball then
+		return
+	end
 
 	local auto_parry_rotation_acuity_value = interface.flags['auto_parry_rotation_acuity'] / 100
 
@@ -2360,10 +2360,6 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
     end
 
     if not AutoParry.ball.ball_entity then
-        return
-    end
-
-    if not AutoParry.ball.training_ball_entity then
         return
     end
 
