@@ -864,8 +864,8 @@ do
         Title = "Curve Method",
         Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
         Default = "Linear",
-        Callback = function(selected)
-            current_curve = selected
+        Callback = function(value)
+            current_curve = value
             print("Selected Curve Method:", selected)
         end
     })
@@ -884,8 +884,9 @@ do
 	WinSoundSection:NewToggle({
 		Title = "Enable Win Sound",
 		Default = false,
-		Callback = function(tr)
-			print("Win Sound Enabled:", tr)
+		Callback = function(state)
+                win_sound_enabled = state
+			print("Win Sound Enabled:", state)
 		end
 	})
 end
@@ -902,8 +903,9 @@ do
 	HitSoundSection:NewToggle({
 		Title = "Enable Hit Sound",
 		Default = false,
-		Callback = function(tr)
-			print("Hit Sound Enabled:", tr)
+		Callback = function(state)
+                hit_sound_enabled = state
+			print("Hit Sound Enabled:", state)
 		end
 	})
 end
@@ -920,8 +922,9 @@ do
 	NoSlowSection:NewToggle({
 		Title = "Enable No Slow",
 		Default = false,
-		Callback = function(tr)
-			print("No Slow Enabled:", tr)
+		Callback = function(state)
+                no_slow_enabled = state
+			print("No Slow Enabled:", state)
 		end
 	})
 end
@@ -944,16 +947,18 @@ do
 	NoRenderSection:NewToggle({
 		Title = "Enable No Render",
 		Default = false,
-		Callback = function(tr)
-			print("No Render Enabled:", tr)
+		Callback = function(state)
+                no_render_enabled = state
+			print("No Render Enabled:", state)
 		end
 	})
 
 	NoRenderSection:NewToggle({
 		Title = "Smart No Render",
 		Default = false,
-		Callback = function(tr)
-			print("Smart No Render Enabled:", tr)
+		Callback = function(state)
+                smart_no_render_enabled = state
+			print("Smart No Render Enabled:", state)
 		end
 	})
 end
@@ -967,12 +972,22 @@ do
 		Position = "Left"
 	})
 
+        ShadersSection:NewToggle({
+		Title = "Shaders",
+		Default = false,
+		Callback = function(state)
+                shaders_enabled = state
+			print("Shaders Enabled:", state)
+		end
+	})
+
 	ShadersSection:NewSlider({
 		Title = "Intensity",
 		Min = 0,
-		Max = 100,
-		Default = 50,
+		Max = 150,
+		Default = 1,
 		Callback = function(value)
+                shaders_intensity_value = value
 			print("Shader Intensity:", value)
 		end
 	})
@@ -981,8 +996,9 @@ do
 		Title = "Size",
 		Min = 0,
 		Max = 100,
-		Default = 70,
+		Default = 15,
 		Callback = function(value)
+                shaders_size_value = value
 			print("Shader Size:", value)
 		end
 	})
@@ -990,9 +1006,10 @@ do
 	ShadersSection:NewSlider({
 		Title = "Threshold",
 		Min = 0,
-		Max = 100,
-		Default = 100,
+		Max = 135,
+		Default = 1,
 		Callback = function(value)
+                shaders_threshold_value = value
 			print("Shader Threshold:", value)
 		end
 	})
@@ -1001,8 +1018,9 @@ do
 		Title = "Diffuse Scale",
 		Min = 0,
 		Max = 100,
-		Default = 100,
+		Default = 1,
 		Callback = function(value)
+                environment_diffuse_scale_value = value
 			print("Diffuse Scale:", value)
 		end
 	})
@@ -1011,8 +1029,9 @@ do
 		Title = "Specular Scale",
 		Min = 0,
 		Max = 100,
-		Default = 100,
+		Default = 1,
 		Callback = function(value)
+                environment_specular_scale_value = value
 			print("Specular Scale:", value)
 		end
 	})
@@ -1020,8 +1039,9 @@ do
 	ShadersSection:NewToggle({
 		Title = "Enable Ray Tracing",
 		Default = false,
-		Callback = function(tr)
-			print("Ray Tracing Enabled:", tr)
+		Callback = function(state)
+                shaders_raytracing_enabled = state
+			print("Ray Tracing Enabled:", state)
 		end
 	})
 end
@@ -1035,12 +1055,23 @@ do
 		Position = "Right"
 	})
 
+        AmbientSection:NewToggle({
+		Title = "Ambient",
+		Default = false,
+		Callback = function(state)
+                ambient_enabled = state
+			print("Ambient Enabled:", state)
+		end
+	})
+
 	AmbientSection:NewSlider({
 		Title = "Density",
 		Min = 0,
 		Max = 100,
 		Default = 50,
 		Callback = function(value)
+                density_strength = value
+                density_strength = value
 			print("Ambient Density:", value)
 		end
 	})
@@ -1058,8 +1089,9 @@ do
 	NightModeSection:NewToggle({
 		Title = "Enable Night Mode",
 		Default = false,
-		Callback = function(tr)
-			print("Night Mode Enabled:", tr)
+		Callback = function(state)
+                night_mode_enabled = state
+			print("Night Mode Enabled:", state)
 		end
 	})
 end
@@ -1073,11 +1105,21 @@ do
 		Position = "Right"
 	})
 
+        PlushieSection:NewToggle({
+		Title = "Ambient",
+		Default = false,
+		Callback = function(state)
+                plushie_enabled = state
+			print("Plushie Enabled:", state)
+		end
+	})
+
 	PlushieSection:NewDropdown({
 		Title = "Plushie Type",
 		Data = {"Pillow", "Touhou", "Shion", "Miku", "Sino", "Soi"},
 		Default = "Pillow",
 		Callback = function(value)
+                selected_plushie = value
 			print("Plushie Type Selected:", value)
 		end
 	})
@@ -1095,8 +1137,9 @@ do
 	ColorShiftSection:NewToggle({
 		Title = "Enable Color Shift",
 		Default = false,
-		Callback = function(tr)
-			print("Color Shift Enabled:", tr)
+		Callback = function(state)
+                color_shift_enabled = state
+			print("Color Shift Enabled:", state)
 		end
 	})
 end
@@ -1113,8 +1156,9 @@ do
 	SkyboxSection:NewToggle({
 		Title = "Remove Clouds",
 		Default = false,
-		Callback = function(tr)
-			print("Remove Clouds Enabled:", tr)
+		Callback = function(state)
+                skybox_enabled = state
+			print("Skybox Enabled:", state)
 		end
 	})
 
@@ -1123,6 +1167,7 @@ do
 		Data = {"Anime", "Rufus", "Fantasy", "Angelic", "Clouded", "Lyfestyle", "Deepspace", "Spongebob", "Morning Mudd", "Met Tha Devil"},
 		Default = "Anime",
 		Callback = function(value)
+                selected_skybox = value
 			print("Skybox Type Selected:", value)
 		end
 	})
@@ -1137,12 +1182,22 @@ do
 		Position = "Right"
 	})
 
+        TrailSection:NewToggle({
+		Title = "Trail",
+		Default = false,
+		Callback = function(state)
+                trail_enabled = state
+			print("Trail Enabled:", state)
+		end
+	})
+
 	TrailSection:NewSlider({
 		Title = "Scale",
 		Min = 0,
 		Max = 100,
 		Default = 30,
 		Callback = function(value)
+                trail_scale = value
 			print("Trail Scale:", value)
 		end
 	})
@@ -1160,8 +1215,9 @@ do
 	HitEffectSection:NewToggle({
 		Title = "Enable Hit Effect",
 		Default = false,
-		Callback = function(tr)
-			print("Hit Effect Enabled:", tr)
+		Callback = function(state)
+                hit_effect_enabled = state
+			print("Hit Effect Enabled:", state)
 		end
 	})
 end
@@ -1184,8 +1240,9 @@ do
     auto_rewards:NewToggle({
         Title = "Enable Auto Rewards",
         Default = false,
-        Callback = function(value)
-            print("Auto Rewards toggled:", value)
+        Callback = function(state)
+        auto_rewards_enabled = state
+            print("Auto Rewards toggled:", state)
         end
     })
 end
@@ -1198,12 +1255,22 @@ do
         Position = 'left'
     })
 
-    local strafe_speed = strafe:NewSlider({
-        Title = 'Speed',
+    strafe:NewToggle({
+		Title = "strafe",
+		Default = false,
+		Callback = function(state)
+                strafe_enabled = state
+			print("Strafe Enabled:", state)
+		end
+	})
+
+     strafe:NewSlider({
+        Title = "Speed",
         Min = 1,
         Max = 100,
-        Default = 50,
+        Default = 1,
         Callback = function(value)
+        strength = value
             print("Strafe Speed:", value)
         end
     })
@@ -1218,10 +1285,20 @@ do
     })
 
     personnel_detector:NewToggle({
+		Title = "detector smart",
+		Default = false,
+		Callback = function(state)
+personnel_detector_enabled = state
+			print("Personnel Detect Enabled:", state)
+		end
+	})
+
+    personnel_detector:NewToggle({
         Title = 'Auto Leave',
         Default = false,
-        Callback = function(value)
-            print("Auto Leave toggled:", value)
+        Callback = function(state)
+personnel_detector_auto_leave_enabled = state
+            print("Auto Leave Enabled:", state)
         end
     })
 end
@@ -1234,12 +1311,22 @@ do
         Position = 'left'
     })
 
-    local gravity_strength = gravity:NewSlider({
+    gravity:NewToggle({
+		Title = "gravity",
+		Default = false,
+		Callback = function(state)
+                gravity_enabled = state
+			print("Gravity Enabled:", state)
+		end
+	})
+
+    gravity:NewSlider({
         Title = 'Gravity Strength',
         Min = 1,
         Max = 100,
-        Default = 50,
+        Default = 1,
         Callback = function(value)
+        strength = value
             print("Gravity Strength:", value)
         end
     })
@@ -1253,12 +1340,22 @@ do
         Position = 'right'
     })
 
-    local field_of_view = camera:NewSlider({
+    camera:NewToggle({
+		Title = 'camera',
+		Default = false,
+		Callback = function(state)
+                camera_enabled = state
+			print("camera Enabled:", state)
+		end
+	})
+
+     camera:NewSlider({
         Title = 'Field Of View',
         Min = 10,
         Max = 120,
         Default = 70,
         Callback = function(value)
+        current_camera = value
             print("Field Of View:", value)
         end
     })
@@ -1277,6 +1374,7 @@ do
         Data = {"Continuity Zero", "Quad Jump", "Quasar"},
         Default = "Continuity Zero",
         Callback = function(value)
+        ability_vulnerability_enabled = value
             print("Ability Vulnerability Mode Selected:", value)
         end
     })
@@ -1293,8 +1391,9 @@ do
     local smart_animations = animations:NewToggle({
         Title = 'Smart Animations',
         Default = false,
-        Callback = function(value)
-            print("Smart Animations toggled:", value)
+        Callback = function(state)
+        smart_animations_enabled = state
+            print("Smart Animations toggled:", state)
         end
     })
 
@@ -1322,6 +1421,7 @@ do
             Data = dropdown_emotes_table,
             Default = dropdown_emotes_table[1],  -- Default to the first choice if available
             Callback = function(value)
+            current_animation = value
                 print("Animation Selected:", value)
             end
         })
