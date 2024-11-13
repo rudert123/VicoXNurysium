@@ -23,7 +23,7 @@ local crypter = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Egor
 local notify = NothingLibrary.Notification();
 
 notify.new({
-        Title = "...VicoX Is Fetch...",
+        Title = "...VicoXNurysium Is Fetch...",
 	Description = "welcome to Vico script i hope you like it 😋..",
 	Duration = 6,
 	Icon = "rbxassetid://8997385628"
@@ -2457,15 +2457,11 @@ task.defer(function()
 		local smart_no_render_enabled = interface.flags['smart_no_render']
 		local ability_vulnerability_enabled = interface.flags['ability_vulnerability']
 
-		local parry_interval = math.max(0.05, 1 / (ping_threshold / 10)) -- Sesuaikan interval dengan ping
-task.spawn(function()
-    repeat
-        AutoParry.perform_parry()
-        RunService.PreSimulation:Wait(parry_interval)
-    until (tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
+		if no_render_enabled then
+            if AutoParry.ball.properties.auto_spam then
 
-    ball_properties.cooldown = false
-end)
+AutoParry.perform_parry()
+			end
 
 			if (smart_no_render_enabled and not ability_vulnerability_enabled) and not AutoParry.ball.properties.auto_spam then
 				LocalPlayer.PlayerScripts.EffectScripts.ClientFX.Enabled = true
