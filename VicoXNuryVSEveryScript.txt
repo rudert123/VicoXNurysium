@@ -219,7 +219,7 @@ function AutoParry.get_client_ball()
     end
 end
 
-local function getTrainingBall()
+local function AutoParry.get_training_ball()
 	for index, ball in workspace:WaitForChild("TrainingBalls"):GetChildren() do
 		if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
 			return ball
@@ -282,26 +282,13 @@ function Player:get_closest_player_to_cursor()
 end
 
 function AutoParry.get_parry_remote()
-    while true do
-        local found = false
-        for _, object in { cloneref(game:GetService('VirtualUser')) } do
-            local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
+    local object = cloneref(game:GetService('VirtualUser'))
 
-            if temp_remote and temp_remote.Name:find('\n') then
-                AutoParry.ball.properties.parry_remote = temp_remote
-                found = true
-                break
-            end
+    object.ChildAdded:Connect(function(child)
+        if child:IsA('RemoteEvent') and child.Name:find('\n') then
+            AutoParry.ball.properties.parry_remote = child
         end
-
-        -- Jika remote sudah ditemukan, keluar dari loop
-        if found then
-            break
-        end
-
-        -- Tunggu sebelum mencoba lagi untuk mencegah lag
-        wait(0.5)
-    end
+    end)
 end
 
 AutoParry.get_parry_remote()
@@ -2332,11 +2319,11 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 		return
 	end
 
-	local ball = AutoParry.get_ball()
+	local ball = AutoParry.get_ball() or AutoParry.get_training_ball()
 
-	if not ball then
-		return
-	end
+if not ball then
+	return
+end
 
 	local auto_parry_rotation_acuity_value = interface.flags['auto_parry_rotation_acuity'] / 100
 
@@ -2373,6 +2360,10 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
     end
 
     if not AutoParry.ball.ball_entity then
+        return
+    end
+
+    if not AutoParry.ball.training_ball_entity then
         return
     end
 
