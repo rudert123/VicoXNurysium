@@ -112,7 +112,7 @@ AutoParry.ball = {
         auto_spam = false,
         cooldown = false,
 		respawn_time = 0,
-        parry_range = 15,
+        parry_range = 13,
         spam_range = 0,
         maximum_speed = 0,
 		old_speed = 0,
@@ -282,15 +282,13 @@ function Player:get_closest_player_to_cursor()
 end
 
 function AutoParry.get_parry_remote()
-    local connection
-    connection = RunService.Heartbeat:Connect(function()
+    RunService.Heartbeat:Connect(function()
         for _, object in { cloneref(game:GetService('VirtualUser')) } do
             local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
 
             if temp_remote and temp_remote.Name:find('\n') then
                 AutoParry.ball.properties.parry_remote = temp_remote
-                connection:Disconnect()  -- Menghentikan pencarian setelah menemukan remote
-                break
+                -- Remote yang sesuai ditemukan, tetapi pencarian terus berjalan
             end
         end
     end)
@@ -2392,7 +2390,7 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 			spam_accuracy = spam_accuracity,
 			parries = ball_properties.parries,
 			ball_speed = ball_properties.speed,
-			range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
+			range = ball_properties.spam_range / (3.19 - ping_threshold / 10),
 			last_hit = ball_properties.last_hit,
 			ball_distance = ball_properties.distance,
 			maximum_speed = ball_properties.maximum_speed,
