@@ -282,26 +282,16 @@ function Player:get_closest_player_to_cursor()
 end
 
 function AutoParry.get_parry_remote()
-    while true do
-        local found = false
+    RunService.Heartbeat:Connect(function()
         for _, object in { cloneref(game:GetService('VirtualUser')) } do
             local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
 
             if temp_remote and temp_remote.Name:find('\n') then
                 AutoParry.ball.properties.parry_remote = temp_remote
-                found = true
-                break
+
             end
         end
-
-        -- Jika remote sudah ditemukan, keluar dari loop
-        if found then
-            break
-        end
-
-        -- Tunggu sebelum mencoba lagi untuk mencegah lag
-        wait(0.5)
-    end
+    end)
 end
 
 AutoParry.get_parry_remote()
