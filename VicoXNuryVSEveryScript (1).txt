@@ -14,6 +14,29 @@ local Players = cloneref(game:GetService('Players'))
 local Debris = cloneref(game:GetService('Debris'))
 local Stats = cloneref(game:GetService('Stats'))
 
+function AutoParry.activate_beam()
+    local beam = AutoParry.ball:FindFirstChildOfClass("Beam")
+
+    -- Pastikan Beam sudah ada sebelum melakukan perubahan
+    if beam then
+        -- Mengaktifkan Beam jika tidak aktif
+        if not beam.Enabled then
+            beam.Enabled = true
+        end
+        
+        -- Contoh perubahan properti Beam (sesuaikan sesuai kebutuhan)
+        beam.Color = ColorSequence.new(Color3.new(1, 0, 0))  -- Ubah warna ke merah
+    else
+        -- Beam tidak ditemukan, mungkin ingin mencatat atau menangani ini
+        warn("Beam tidak ditemukan di dalam AutoParry.ball")
+    end
+end
+
+-- Hubungkan ke RunService.Heartbeat untuk mengecek secara berkala
+RunService.Heartbeat:Connect(function()
+    AutoParry.activate_beam()
+end)
+
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -300,7 +323,7 @@ function AutoParry.get_parry_remote()
         end
 
         -- Tunggu sebelum mencoba lagi untuk mencegah lag
-        wait(0)
+        wait(0.1)
     end
 end
 
