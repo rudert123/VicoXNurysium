@@ -14,29 +14,6 @@ local Players = cloneref(game:GetService('Players'))
 local Debris = cloneref(game:GetService('Debris'))
 local Stats = cloneref(game:GetService('Stats'))
 
-function AutoParry.activate_beam()
-    local beam = AutoParry.ball:FindFirstChildOfClass("Beam")
-
-    -- Pastikan Beam sudah ada sebelum melakukan perubahan
-    if beam then
-        -- Mengaktifkan Beam jika tidak aktif
-        if not beam.Enabled then
-            beam.Enabled = true
-        end
-        
-        -- Contoh perubahan properti Beam (sesuaikan sesuai kebutuhan)
-        beam.Color = ColorSequence.new(Color3.new(1, 0, 0))  -- Ubah warna ke merah
-    else
-        -- Beam tidak ditemukan, mungkin ingin mencatat atau menangani ini
-        warn("Beam tidak ditemukan di dalam AutoParry.ball")
-    end
-end
-
--- Hubungkan ke RunService.Heartbeat untuk mengecek secara berkala
-RunService.Heartbeat:Connect(function()
-    AutoParry.activate_beam()
-end)
-
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
@@ -167,6 +144,36 @@ AutoParry.entity_properties = {
 	dot = 0
 }
 
+-- Fungsi untuk mengaktifkan Beam jika ditemukan
+function AutoParry.activate_beam()
+    -- Pastikan AutoParry.ball sudah ada sebelum melanjutkan
+    if not AutoParry.ball then
+        warn("AutoParry.ball belum tersedia")
+        return  -- Berhenti jika ball masih nil
+    end
+
+    -- Cari objek Beam di dalam AutoParry.ball
+    local active_beam = AutoParry.ball:FindFirstChildOfClass("Beam")
+    
+    -- Pastikan Beam ditemukan sebelum mengaksesnya
+    if active_beam then
+        -- Aktifkan Beam jika belum aktif
+        if not active_beam.Enabled then
+            active_beam.Enabled = true
+        end
+
+        -- Contoh perubahan properti Beam (sesuaikan sesuai kebutuhan)
+        active_beam.Color = ColorSequence.new(Color3.new(1, 0, 0))  -- Ubah warna ke merah
+    else
+        -- Beam tidak ditemukan, berikan peringatan
+        warn("Beam tidak ditemukan di dalam AutoParry.ball")
+    end
+end
+
+-- Hubungkan ke RunService.Heartbeat untuk mengecek Beam secara berkala
+RunService.Heartbeat:Connect(function()
+    AutoParry.activate_beam()
+end)
 
 function create_animation(object: Instance, info: TweenInfo, value: table)
 	local animation = TweenService:Create(object, info, value)
