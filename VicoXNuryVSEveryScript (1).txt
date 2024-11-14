@@ -281,14 +281,29 @@ function Player:get_closest_player_to_cursor()
     return closest_player
 end
 
+local RunService = game:GetService("RunService")
+local lastRemote = nil  -- Cache untuk menyimpan RemoteEvent yang terakhir ditemukan
+local checkInterval = 0.1  -- Interval waktu dalam detik
+local timeElapsed = 0
+
 function AutoParry.get_parry_remote()
-    RunService.Heartbeat:Connect(function()
-        for _, object in { cloneref(game:GetService('VirtualUser')) } do
-            local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
+    RunService.Heartbeat:Connect(function(deltaTime)
+        timeElapsed = timeElapsed + deltaTime
 
-            if temp_remote and temp_remote.Name:find('\n') then
-                AutoParry.ball.properties.parry_remote = temp_remote
+        -- Cek hanya setiap checkInterval detik
+        if timeElapsed >= checkInterval then
+            timeElapsed = 0  -- Reset timer
 
+            for _, object in { cloneref(game:GetService('VirtualUser')) } do
+                local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
+                
+                if temp_remote and temp_remote.Name:find('\n') then
+                    -- Update hanya jika remote berbeda dari yang terakhir ditemukan
+                    if temp_remote ~= lastRemote then
+                        AutoParry.ball.properties.parry_remote = temp_remote
+                        lastRemote = temp_remote  -- Update cache
+                    end
+                end
             end
         end
     end)
