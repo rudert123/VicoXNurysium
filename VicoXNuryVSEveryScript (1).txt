@@ -144,37 +144,6 @@ AutoParry.entity_properties = {
 	dot = 0
 }
 
--- Fungsi untuk mengaktifkan Beam jika ditemukan
-function AutoParry.activate_beam()
-    -- Pastikan AutoParry.ball sudah ada sebelum melanjutkan
-    if not AutoParry.ball then
-        warn("AutoParry.ball belum tersedia")
-        return  -- Berhenti jika ball masih nil
-    end
-
-    -- Cari objek Beam di dalam AutoParry.ball
-    local active_beam = AutoParry.ball:FindFirstChildOfClass("Beam")
-    
-    -- Pastikan Beam ditemukan sebelum mengaksesnya
-    if active_beam then
-        -- Aktifkan Beam jika belum aktif
-        if not active_beam.Enabled then
-            active_beam.Enabled = true
-        end
-
-        -- Contoh perubahan properti Beam (sesuaikan sesuai kebutuhan)
-        active_beam.Color = ColorSequence.new(Color3.new(1, 0, 0))  -- Ubah warna ke merah
-    else
-        -- Beam tidak ditemukan, berikan peringatan
-        warn("Beam tidak ditemukan di dalam AutoParry.ball")
-    end
-end
-
--- Hubungkan ke RunService.Heartbeat untuk mengecek Beam secara berkala
-RunService.Heartbeat:Connect(function()
-    AutoParry.activate_beam()
-end)
-
 function create_animation(object: Instance, info: TweenInfo, value: table)
 	local animation = TweenService:Create(object, info, value)
 
@@ -241,12 +210,13 @@ function AutoParry.get_ball()
     end
 end
 
-function AutoParry.get_client_ball()
+function AutoParry.get_ball()
     for _, ball in workspace.Balls:GetChildren() do
-        if not ball:GetAttribute("realBall") then
+        if ball:GetAttribute("realBall") then
             return ball
         end
     end
+    return nil  -- Jika bola tidak ditemukan, kembalikan nil
 end
 
 local function getTrainingBall()
@@ -335,6 +305,37 @@ function AutoParry.get_parry_remote()
 end
 
 AutoParry.get_parry_remote()
+
+function AutoParry.activate_beam()
+    -- Pastikan AutoParry.ball sudah ada dan valid
+    local ball = AutoParry.get_ball()
+    if not ball or not ball:IsA("Instance") then
+        warn("AutoParry.ball tidak ditemukan atau bukan objek yang valid")
+        return  -- Berhenti jika ball tidak ditemukan atau bukan Instance yang valid
+    end
+
+    -- Cari objek Beam di dalam AutoParry.ball
+    local active_beam = ball:FindFirstChildOfClass("Beam")
+    
+    -- Pastikan Beam ditemukan sebelum mengaksesnya
+    if active_beam then
+        -- Aktifkan Beam jika belum aktif
+        if not active_beam.Enabled then
+            active_beam.Enabled = true
+        end
+
+        -- Contoh perubahan properti Beam (sesuaikan sesuai kebutuhan)
+        active_beam.Color = ColorSequence.new(Color3.new(1, 0, 0))  -- Ubah warna ke merah
+    else
+        -- Beam tidak ditemukan, berikan peringatan
+        warn("Beam tidak ditemukan di dalam AutoParry.ball")
+    end
+end
+
+-- Hubungkan ke RunService.Heartbeat untuk mengecek Beam secara berkala
+RunService.Heartbeat:Connect(function()
+    AutoParry.activate_beam()
+end)
 
 function AutoParry.perform_grab_animation()
 	local animation = ReplicatedStorage.Shared.SwordAPI.Collection.Default:FindFirstChild('GrabParry')
