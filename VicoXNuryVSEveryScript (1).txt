@@ -112,7 +112,7 @@ AutoParry.ball = {
         auto_spam = false,
         cooldown = false,
 		respawn_time = 0,
-        parry_range = 15,
+        parry_range = 25,
         spam_range = 0,
         maximum_speed = 0,
 		old_speed = 0,
@@ -2385,7 +2385,26 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
 	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.3
-    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi
+    local speed_factor = 10    -- Faktor penyesuaian kecepatan bola
+local max_parry_range = 50 -- Batas atas jarak parry
+local min_parry_range = 5  -- Batas bawah jarak parry
+local power = 1.5          -- Faktor daya untuk memperbesar pengaruh kecepatan
+local percentage = 0.25    -- Pengaruh kecepatan bola sebagai persentase
+local log_base = 10        -- Basis logaritma untuk kecepatan bola
+
+-- Rumus penggabungan
+ball_properties.parry_range = ping_threshold + 
+    math.max(                          -- Menggunakan max untuk memastikan nilai tidak terlalu kecil
+        math.min(                        -- Menggunakan min untuk membatasi nilai kecepatan
+            math.pow(                    -- Memperbesar pengaruh kecepatan bola dengan daya
+                math.abs(ball_properties.speed) / speed_factor, power
+            ),
+            max_parry_range             -- Membatasi agar parry_range tidak lebih dari max_parry_range
+        ),
+        min_parry_range,                 -- Membatasi agar parry_range tidak kurang dari min_parry_range
+    ) + math.log(                        -- Menambahkan pengaruh logaritma untuk pertumbuhan lebih lambat
+        math.abs(ball_properties.speed) / speed_factor + 1, log_base
+    ) * percentage
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
 		ball_properties.parry_range += 11
