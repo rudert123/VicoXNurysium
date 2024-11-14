@@ -208,7 +208,6 @@ function AutoParry.get_ball()
             return ball
         end
     end
-    return nil  -- Jika bola tidak ditemukan, kembalikan nil
 end
 
 function AutoParry.get_client_ball()
