@@ -372,7 +372,7 @@ function AutoParry.perform_parry()
 
 		ball_properties.cooldown = true
 	
-		local current_curve = interface.flags['curve_method']
+		local current_curve
 
 		if current_curve == 'Linear' then
 			direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, target_position)
@@ -417,7 +417,7 @@ function AutoParry.perform_parry()
 		false
 	)
 
-    task.delay(0.55, function()
+    task.delay(0.15, function()
         if ball_properties.parries > 0 then
             ball_properties.parries -= 1
         end
