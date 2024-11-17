@@ -2450,7 +2450,27 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
 	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.4
-        ball_properties.parry_range = math.max(math.max(ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 100), 25), 1200)
+math.help = function(operation, ...)
+    local args = {...} -- Mengambil semua argumen tambahan
+    if operation == "pi_multiply" then
+        -- Mengalikan angka dengan Pi
+        return (args[1] or 1) * math.pi
+    elseif operation == "sqrt_safe" then
+        -- Akar kuadrat dengan nilai aman (menghindari angka negatif)
+        local value = args[1] or 0
+        return value >= 0 and math.sqrt(value) or nil
+    elseif operation == "abs_add" then
+        -- Menambahkan dua nilai absolut
+        return math.abs(args[1] or 0) + math.abs(args[2] or 0)
+    else
+        -- Operasi tidak dikenal
+        return "Operasi tidak valid! Gunakan: pi_multiply, sqrt_safe, abs_add."
+    end
+end
+
+        ball_properties.parry_range = ping_threshold 
+    + math.help("pi_multiply", ball_properties.speed) / math.pi 
+    + math.help("sqrt_safe", ping_threshold / 100)
 
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
