@@ -2474,7 +2474,7 @@ end
 -- Menggunakan math_utils.help dalam perhitungan
 ball_properties.parry_range = ping_threshold 
     + math_utils.help("pi_multiply", ball_properties.speed) / math.pi 
-    + math_utils.help("sqrt_safe", ping_threshold / 100)
+    + math_utils.help("sqrt_safe", ping_threshold)
 
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
