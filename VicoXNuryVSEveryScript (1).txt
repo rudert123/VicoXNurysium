@@ -2470,110 +2470,152 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 end)
 
 ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
-	local auto_parry_enabled = interface.flags['auto_parry']
+    -- Mengecek apakah fitur AutoParry diaktifkan
+    local auto_parry_enabled = interface.flags['auto_parry']
+    print("AutoParry enabled status:", auto_parry_enabled)
 
-	if not auto_parry_enabled then
-		AutoParry.reset()
-
+    if not auto_parry_enabled then
+        AutoParry.reset()
+        print("AutoParry dinonaktifkan. Reset AutoParry.")
         return
     end
 
-	local Character = LocalPlayer.Character
+    -- Mendapatkan karakter pemain lokal
+    local Character = LocalPlayer.Character
+    print("LocalPlayer Character:", Character)
 
-	if not Character then
-		return
-	end
+    if not Character then
+        print("Karakter tidak ditemukan. Menghentikan eksekusi.")
+        return
+    end
 
+    -- Memeriksa apakah karakter mati
     if Character.Parent == Dead then
-		AutoParry.reset()
-		
+        AutoParry.reset()
+        print("Karakter mati. Reset AutoParry.")
         return
     end
 
+    -- Memastikan entitas bola tersedia
     if not AutoParry.ball.ball_entity then
+        print("Ball entity tidak ditemukan. Menghentikan eksekusi.")
         return
     end
 
-	local ball_properties = AutoParry.ball.properties
+    -- Mendapatkan properti bola
+    local ball_properties = AutoParry.ball.properties
 
-	ball_properties.is_curved = AutoParry.is_curved()
-	
-	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
-	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
-	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
+    -- Menentukan apakah bola melengkung
+    ball_properties.is_curved = AutoParry.is_curved()
+    print("Ball is curved:", ball_properties.is_curved)
 
-	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
-ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
+    -- Mengatur threshold berdasarkan ping
+    local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
+    local spam_accuracy = ball_properties.maximum_speed / 7 + ping_threshold
+    local parry_accuracy = ball_properties.maximum_speed / 11.5 + ping_threshold
 
-	if Player.Entity.properties.sword == 'Titan Blade' then
-		ball_properties.parry_range += 11
-		ball_properties.spam_range += 2
-	end	
+    -- Menghitung jarak parry dan spam
+    ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
+    ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
 
-	local distance_to_last_position = LocalPlayer:DistanceFromCharacter(ball_properties.last_position)
+    -- Debug: Menampilkan nilai properti bola
+    print("Ping threshold:", ping_threshold)
+    print("Spam range:", ball_properties.spam_range)
+    print("Parry range:", ball_properties.parry_range)
 
-	if ball_properties.auto_spam and AutoParry.target.current then
-		ball_properties.auto_spam = AutoParry.is_spam({
-			speed = ball_properties.speed,
-			spam_accuracy = spam_accuracity,
-			parries = ball_properties.parries,
-			ball_speed = ball_properties.speed,
-			range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
-			last_hit = ball_properties.last_hit,
-			ball_distance = ball_properties.distance,
-			maximum_speed = ball_properties.maximum_speed,
-			old_speed = AutoParry.ball.properties.old_speed,
-			entity_distance = AutoParry.entity_properties.distance,
-			last_position_distance = distance_to_last_position,
-		})
-	end
+    -- Menyesuaikan jika pemain menggunakan senjata tertentu
+    if Player.Entity.properties.sword == 'Titan Blade' then
+        ball_properties.parry_range += 11
+        ball_properties.spam_range += 2
+        print("Titan Blade digunakan. Parry range dan spam range disesuaikan.")
+    end
 
-	if ball_properties.auto_spam then
+    -- Menghitung jarak dari posisi terakhir bola ke pemain
+    local distance_to_last_position = LocalPlayer:DistanceFromCharacter(ball_properties.last_position)
+    print("Distance to last position:", distance_to_last_position)
+
+    -- Mengevaluasi apakah auto spam diaktifkan
+    if ball_properties.auto_spam and AutoParry.target.current then
+        ball_properties.auto_spam = AutoParry.is_spam({
+            speed = ball_properties.speed,
+            spam_accuracy = spam_accuracy,
+            parries = ball_properties.parries,
+            ball_speed = ball_properties.speed,
+            range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
+            last_hit = ball_properties.last_hit,
+            ball_distance = ball_properties.distance,
+            maximum_speed = ball_properties.maximum_speed,
+            old_speed = AutoParry.ball.properties.old_speed,
+            entity_distance = AutoParry.entity_properties.distance,
+            last_position_distance = distance_to_last_position,
+        })
+
+        print("AutoSpam status setelah evaluasi:", ball_properties.auto_spam)
+    end
+
+    -- Jika auto spam diaktifkan, hentikan proses
+    if ball_properties.auto_spam then
+        print("AutoSpam aktif. Menghentikan eksekusi.")
         return
     end
 
-	if AutoParry.target.current and AutoParry.target.current.Name == LocalPlayer.Name then
-		ball_properties.auto_spam = AutoParry.is_spam({
-			speed = ball_properties.speed,
-			spam_accuracy = spam_accuracity,
-			parries = ball_properties.parries,
-			ball_speed = ball_properties.speed,
-			range = ball_properties.spam_range,
-			last_hit = ball_properties.last_hit,
-			ball_distance = ball_properties.distance,
-			maximum_speed = ball_properties.maximum_speed,
-			old_speed = AutoParry.ball.properties.old_speed,
-			entity_distance = AutoParry.entity_properties.distance,
-			last_position_distance = distance_to_last_position,
-		})
-	end
+    -- Memastikan target valid
+    if AutoParry.target.current and AutoParry.target.current.Name == LocalPlayer.Name then
+        ball_properties.auto_spam = AutoParry.is_spam({
+            speed = ball_properties.speed,
+            spam_accuracy = spam_accuracy,
+            parries = ball_properties.parries,
+            ball_speed = ball_properties.speed,
+            range = ball_properties.spam_range,
+            last_hit = ball_properties.last_hit,
+            ball_distance = ball_properties.distance,
+            maximum_speed = ball_properties.maximum_speed,
+            old_speed = AutoParry.ball.properties.old_speed,
+            entity_distance = AutoParry.entity_properties.distance,
+            last_position_distance = distance_to_last_position,
+        })
 
-	if ball_properties.auto_spam then
-        return
-    end
-	
-	if ball_properties.is_curved then
-        return
+        print("AutoSpam status setelah evaluasi kedua:", ball_properties.auto_spam)
     end
 
-	if ball_properties.distance > ball_properties.parry_range and ball_properties.distance > parry_accuracity then
-        return
-    end
-	
-	if AutoParry.target.current and AutoParry.target.current ~= LocalPlayer.Character then
+    -- Jika auto spam tetap aktif, hentikan proses
+    if ball_properties.auto_spam then
+        print("AutoSpam tetap aktif. Menghentikan eksekusi.")
         return
     end
 
-	AutoParry.perform_parry()
+    -- Jika bola melengkung, hentikan proses
+    if ball_properties.is_curved then
+        print("Bola melengkung. Menghentikan eksekusi.")
+        return
+    end
 
-	task.spawn(function()
-		repeat
-			RunService.PreSimulation:Wait(0)
-		until 
-			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
+    -- Jika jarak bola terlalu jauh, hentikan proses
+    if ball_properties.distance > ball_properties.parry_range and ball_properties.distance > parry_accuracy then
+        print("Jarak bola terlalu jauh. Menghentikan eksekusi.")
+        return
+    end
 
-		ball_properties.cooldown = false
-	end)
+    -- Memastikan target valid
+    if AutoParry.target.current and AutoParry.target.current ~= LocalPlayer.Character then
+        print("Target tidak valid. Menghentikan eksekusi.")
+        return
+    end
+
+    -- Melakukan parry
+    print("Melakukan parry.")
+    AutoParry.perform_parry()
+
+    -- Mengatur cooldown setelah parry
+    task.spawn(function()
+        repeat
+            RunService.PreSimulation:Wait(0)
+        until 
+            (tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
+
+        ball_properties.cooldown = false
+        print("Cooldown selesai. Cooldown status:", ball_properties.cooldown)
+    end)
 end)
 
 task.defer(function()
