@@ -2450,7 +2450,10 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
 	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.4
-math.help = function(operation, ...)
+-- Buat tabel kustom untuk fungsi matematika tambahan
+local math_utils = {}
+
+math_utils.help = function(operation, ...)
     local args = {...} -- Mengambil semua argumen tambahan
     if operation == "pi_multiply" then
         -- Mengalikan angka dengan Pi
@@ -2468,9 +2471,10 @@ math.help = function(operation, ...)
     end
 end
 
-        ball_properties.parry_range = ping_threshold 
-    + math.help("pi_multiply", ball_properties.speed) / math.pi 
-    + math.help("sqrt_safe", ping_threshold / 100)
+-- Menggunakan math_utils.help dalam perhitungan
+ball_properties.parry_range = ping_threshold 
+    + math_utils.help("pi_multiply", ball_properties.speed) / math.pi 
+    + math_utils.help("sqrt_safe", ping_threshold / 100)
 
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
