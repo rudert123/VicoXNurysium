@@ -1,18 +1,18 @@
-local RobloxReplicatedStorage = cloneref(game:GetService('RobloxReplicatedStorage'))
-local RbxAnalyticsService = cloneref(game:GetService('RbxAnalyticsService'))
-local ReplicatedStorage = cloneref(game:GetService('ReplicatedStorage'))
-local UserInputService = cloneref(game:GetService('UserInputService'))
-local NetworkClient = cloneref(game:GetService("NetworkClient"))
-local TweenService = cloneref(game:GetService('TweenService'))
-local VirtualUser = cloneref(game:GetService('VirtualUser'))
-local HttpService = cloneref(game:GetService('HttpService'))
-local RunService = cloneref(game:GetService('RunService'))
-local LogService = cloneref(game:GetService('LogService'))
-local Lighting = cloneref(game:GetService('Lighting'))
-local CoreGui = cloneref(game:GetService('CoreGui'))
-local Players = cloneref(game:GetService('Players'))
-local Debris = cloneref(game:GetService('Debris'))
-local Stats = cloneref(game:GetService('Stats'))
+local RobloxReplicatedStorage = game:GetService('RobloxReplicatedStorage')
+local RbxAnalyticsService = game:GetService('RbxAnalyticsService')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local UserInputService = game:GetService('UserInputService')
+local NetworkClient = game:GetService('NetworkClient')
+local TweenService = game:GetService('TweenService')
+local VirtualUser = game:GetService('VirtualUser')
+local HttpService = game:GetService('HttpService')
+local RunService = game:GetService('RunService')
+local LogService = game:GetService('LogService')
+local Lighting = game:GetService('Lighting')
+local CoreGui = game:GetService('CoreGui')
+local Players = game:GetService('Players')
+local Debris = game:GetService('Debris')
+local Stats = game:GetService('Stats')
 
 if not game:IsLoaded() then
     game.Loaded:Wait()
@@ -353,7 +353,7 @@ print("Platform detected:", platform)
 function AutoParry.get_parry_remote()
     while true do
         local found = false
-        for _, object in { cloneref(game:GetService('VirtualUser')) } do
+        for _, object in { game:GetService('VirtualUser') } do
             local temp_remote = object:FindFirstChildOfClass('RemoteEvent')
 
             if temp_remote and temp_remote.Name:find('\n') then
