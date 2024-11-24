@@ -84,7 +84,10 @@ fadeInTween.Completed:Connect(function()
     end)
 end)
 
+local LocalPlayer = Players.LocalPlayer
+
 local NothingLibrary = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/3345-c-a-t-s-u-s/NOTHING/main/source.lua'))();
+
 local crypter = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Egor-Skriptunoff/pure_lua_SHA/master/sha2.lua'), true))()
 local notify = NothingLibrary.Notification();
 
@@ -94,6 +97,637 @@ notify.new({
 	Duration = 6,
 	Icon = "rbxassetid://8997385628"
 })
+
+local Windows = NothingLibrary.new({
+	Title = "Vico - NeuX",
+	Description = "Vico - Blade Ball - Test",
+	Keybind = Enum.KeyCode.LeftControl,
+	Logo = 'http://www.roblox.com/asset/?id=18898582662'
+})
+
+local TabFrame = Windows:NewTab({
+	Title = "Main",
+	Description = "very cool and awesome",
+	Icon = "rbxassetid://7733960981"
+})
+
+
+--// auto parry section
+
+do
+    local AutoSection = TabFrame:NewSection({
+        Title = "Parry",
+        Icon = "rbxassetid://7743869054",
+        Position = "Left"
+    })
+
+    AutoSection:NewToggle({
+		Title = "AutoParry",
+		Default = false,
+		Callback = function(state)
+                auto_parry_enabled = state
+	        print("Autoparry:", state)
+		end
+	})
+
+    -- Toggle for auto parry rotation
+    AutoSection:NewToggle({
+        Title = "Rotation",
+        Default = false,
+        Callback = function(state)
+        auto_parry_rotation_enabled = state
+            print("Auto Parry Rotation:", tr)
+        end
+    })
+
+    -- Slider for auto parry rotation acuity
+    AutoSection:NewSlider({
+        Title = "Acuity",
+        Min = 1,
+        Max = 10,
+        Default = 5,
+        Callback = function(value)
+            auto_parry_rotation_acuity_value = value
+            print("Auto Parry Rotation Acuity:", value)
+        end
+    })
+
+    -- Dropdown for selecting curve method
+    AutoSection:NewDropdown({
+        Title = "Curve Method",
+        Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
+        Default = "Linear",
+        Callback = function(value)
+            current_curve = value
+            print("Selected Curve Method:", selected)
+        end
+    })
+end
+
+
+--// Win Sound
+
+do
+	local WinSoundSection = TabFrame:NewSection({
+		Title = "Win Sound",
+		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
+		Position = "Right"
+	})
+
+	WinSoundSection:NewToggle({
+		Title = "Enable Win Sound",
+		Default = false,
+		Callback = function(state)
+                win_sound_enabled = state
+			print("Win Sound Enabled:", state)
+		end
+	})
+end
+
+--// Hit Sound
+
+do
+	local HitSoundSection = TabFrame:NewSection({
+		Title = "Hit Sound",
+		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
+		Position = "Right"
+	})
+
+	HitSoundSection:NewToggle({
+		Title = "Enable Hit Sound",
+		Default = false,
+		Callback = function(state)
+                hit_sound_enabled = state
+			print("Hit Sound Enabled:", state)
+		end
+	})
+end
+
+--// No Slow
+
+do
+	local NoSlowSection = TabFrame:NewSection({
+		Title = "No Slow",
+		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
+		Position = "Right"
+	})
+
+	NoSlowSection:NewToggle({
+		Title = "Enable No Slow",
+		Default = false,
+		Callback = function(state)
+                no_slow_enabled = state
+			print("No Slow Enabled:", state)
+		end
+	})
+end
+
+local TabFrame1 = Windows:NewTab({
+	Title = "Visual",
+	Description = "Good Visual",
+	Icon = "rbxassetid://7733960981"
+})
+
+--// No Render
+
+do
+	local NoRenderSection = TabFrame1:NewSection({
+		Title = "No Render",
+		Icon = "rbxassetid://7743869054",
+		Position = "Right"
+	})
+
+	NoRenderSection:NewToggle({
+		Title = "Enable No Render",
+		Default = false,
+		Callback = function(state)
+                no_render_enabled = state
+			print("No Render Enabled:", state)
+		end
+	})
+
+	NoRenderSection:NewToggle({
+		Title = "Smart No Render",
+		Default = false,
+		Callback = function(state)
+                smart_no_render_enabled = state
+			print("Smart No Render Enabled:", state)
+		end
+	})
+end
+
+--// Shaders
+
+do
+	local ShadersSection = TabFrame1:NewSection({
+		Title = "Shaders",
+		Icon = "rbxassetid://7743869054",
+		Position = "Left"
+	})
+
+        ShadersSection:NewToggle({
+		Title = "Shaders",
+		Default = false,
+		Callback = function(state)
+                shaders_enabled = state
+			print("Shaders Enabled:", state)
+		end
+	})
+
+	ShadersSection:NewSlider({
+		Title = "Intensity",
+		Min = 0,
+		Max = 150,
+		Default = 1,
+		Callback = function(value)
+                shaders_intensity_value = value
+			print("Shader Intensity:", value)
+		end
+	})
+
+	ShadersSection:NewSlider({
+		Title = "Size",
+		Min = 0,
+		Max = 100,
+		Default = 15,
+		Callback = function(value)
+                shaders_size_value = value
+			print("Shader Size:", value)
+		end
+	})
+
+	ShadersSection:NewSlider({
+		Title = "Threshold",
+		Min = 0,
+		Max = 135,
+		Default = 1,
+		Callback = function(value)
+                shaders_threshold_value = value
+			print("Shader Threshold:", value)
+		end
+	})
+
+	ShadersSection:NewSlider({
+		Title = "Diffuse Scale",
+		Min = 0,
+		Max = 100,
+		Default = 1,
+		Callback = function(value)
+                environment_diffuse_scale_value = value
+			print("Diffuse Scale:", value)
+		end
+	})
+
+	ShadersSection:NewSlider({
+		Title = "Specular Scale",
+		Min = 0,
+		Max = 100,
+		Default = 1,
+		Callback = function(value)
+                environment_specular_scale_value = value
+			print("Specular Scale:", value)
+		end
+	})
+
+	ShadersSection:NewToggle({
+		Title = "Enable Ray Tracing",
+		Default = false,
+		Callback = function(state)
+                shaders_raytracing_enabled = state
+			print("Ray Tracing Enabled:", state)
+		end
+	})
+end
+
+--// Ambient
+
+do
+	local AmbientSection = TabFrame1:NewSection({
+		Title = "Ambient",
+		Icon = "rbxassetid://7743869054",
+		Position = "Right"
+	})
+
+        AmbientSection:NewToggle({
+		Title = "Ambient",
+		Default = false,
+		Callback = function(state)
+                ambient_enabled = state
+			print("Ambient Enabled:", state)
+		end
+	})
+
+	AmbientSection:NewSlider({
+		Title = "Density",
+		Min = 0,
+		Max = 100,
+		Default = 50,
+		Callback = function(value)
+                density_strength = value
+                density_strength = value
+			print("Ambient Density:", value)
+		end
+	})
+end
+
+--// Night Mode
+
+do
+	local NightModeSection = TabFrame1:NewSection({
+		Title = "Night Mode",
+		Icon = "rbxassetid://7743869054",
+		Position = "Left"
+	})
+
+	NightModeSection:NewToggle({
+		Title = "Enable Night Mode",
+		Default = false,
+		Callback = function(state)
+                night_mode_enabled = state
+			print("Night Mode Enabled:", state)
+		end
+	})
+end
+
+--// Plushie
+
+do
+	local PlushieSection = TabFrame1:NewSection({
+		Title = "Plushie",
+		Icon = "rbxassetid://7743869054",
+		Position = "Right"
+	})
+
+        PlushieSection:NewToggle({
+		Title = "Ambient",
+		Default = false,
+		Callback = function(state)
+                plushie_enabled = state
+			print("Plushie Enabled:", state)
+		end
+	})
+
+	PlushieSection:NewDropdown({
+		Title = "Plushie Type",
+		Data = {"Pillow", "Touhou", "Shion", "Miku", "Sino", "Soi"},
+		Default = "Pillow",
+		Callback = function(value)
+                selected_plushie = value
+			print("Plushie Type Selected:", value)
+		end
+	})
+end
+
+--// Color Shift
+
+do
+	local ColorShiftSection = TabFrame1:NewSection({
+		Title = "Color Shift",
+		Icon = "rbxassetid://7743869054",
+		Position = "Right"
+	})
+
+	ColorShiftSection:NewToggle({
+		Title = "Enable Color Shift",
+		Default = false,
+		Callback = function(state)
+                color_shift_enabled = state
+			print("Color Shift Enabled:", state)
+		end
+	})
+end
+
+--// Skybox
+
+do
+	local SkyboxSection = TabFrame1:NewSection({
+		Title = "Skybox",
+		Icon = "rbxassetid://7743869054",
+		Position = "Left"
+	})
+
+	SkyboxSection:NewToggle({
+		Title = "Remove Clouds",
+		Default = false,
+		Callback = function(state)
+                skybox_enabled = state
+			print("Skybox Enabled:", state)
+		end
+	})
+
+	SkyboxSection:NewDropdown({
+		Title = "Skybox Type",
+		Data = {"Anime", "Rufus", "Fantasy", "Angelic", "Clouded", "Lyfestyle", "Deepspace", "Spongebob", "Morning Mudd", "Met Tha Devil"},
+		Default = "Anime",
+		Callback = function(value)
+                selected_skybox = value
+			print("Skybox Type Selected:", value)
+		end
+	})
+end
+
+--// Trail
+
+do
+	local TrailSection = TabFrame1:NewSection({
+		Title = "Trail",
+		Icon = "rbxassetid://7743869054",
+		Position = "Right"
+	})
+
+        TrailSection:NewToggle({
+		Title = "Trail",
+		Default = false,
+		Callback = function(state)
+                trail_enabled = state
+			print("Trail Enabled:", state)
+		end
+	})
+
+	TrailSection:NewSlider({
+		Title = "Scale",
+		Min = 0,
+		Max = 100,
+		Default = 30,
+		Callback = function(value)
+                trail_scale = value
+			print("Trail Scale:", value)
+		end
+	})
+end
+
+--// Hit Effect
+
+do
+	local HitEffectSection = TabFrame1:NewSection({
+		Title = "Hit Effect",
+		Icon = "rbxassetid://7743869054",
+		Position = "Left"
+	})
+
+	HitEffectSection:NewToggle({
+		Title = "Enable Hit Effect",
+		Default = false,
+		Callback = function(state)
+                hit_effect_enabled = state
+			print("Hit Effect Enabled:", state)
+		end
+	})
+end
+
+--// Misc tab
+local TabFrame2 = Windows:NewTab({
+    Title = "Misc",
+    Description = "Here Y'go Misc.",
+    Icon = "rbxassetid://7733960981"
+})
+
+--// Auto rewards
+do
+    local auto_rewards = TabFrame2:NewSection({
+        Title = 'Auto Rewards',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'right'
+    })
+    
+    auto_rewards:NewToggle({
+        Title = "Enable Auto Rewards",
+        Default = false,
+        Callback = function(state)
+        auto_rewards_enabled = state
+            print("Auto Rewards toggled:", state)
+        end
+    })
+end
+
+--// Strafe
+do
+    local strafe = TabFrame2:NewSection({
+        Title = 'Strafe',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'left'
+    })
+
+    strafe:NewToggle({
+		Title = "strafe",
+		Default = false,
+		Callback = function(state)
+                strafe_enabled = state
+			print("Strafe Enabled:", state)
+		end
+	})
+
+     strafe:NewSlider({
+        Title = "Speed",
+        Min = 1,
+        Max = 100,
+        Default = 1,
+        Callback = function(value)
+        strength = value
+            print("Strafe Speed:", value)
+        end
+    })
+end
+
+--// Personnel detector
+do
+    local personnel_detector = TabFrame2:NewSection({
+        Title = 'Personnel Detector',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'right'
+    })
+
+    personnel_detector:NewToggle({
+		Title = "detector smart",
+		Default = false,
+		Callback = function(state)
+personnel_detector_enabled = state
+			print("Personnel Detect Enabled:", state)
+		end
+	})
+
+    personnel_detector:NewToggle({
+        Title = 'Auto Leave',
+        Default = false,
+        Callback = function(state)
+personnel_detector_auto_leave_enabled = state
+            print("Auto Leave Enabled:", state)
+        end
+    })
+end
+
+--// Gravity
+do
+    local gravity = TabFrame2:NewSection({
+        Title = 'Gravity',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'left'
+    })
+
+    gravity:NewToggle({
+		Title = "gravity",
+		Default = false,
+		Callback = function(state)
+                gravity_enabled = state
+			print("Gravity Enabled:", state)
+		end
+	})
+
+    gravity:NewSlider({
+        Title = 'Gravity Strength',
+        Min = 1,
+        Max = 100,
+        Default = 1,
+        Callback = function(value)
+        strength = value
+            print("Gravity Strength:", value)
+        end
+    })
+end
+
+--// Camera
+do
+    local camera = TabFrame2:NewSection({
+        Title = 'Camera',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'right'
+    })
+
+    camera:NewToggle({
+		Title = 'camera',
+		Default = false,
+		Callback = function(state)
+                camera_enabled = state
+			print("camera Enabled:", state)
+		end
+	})
+
+     camera:NewSlider({
+        Title = 'Field Of View',
+        Min = 10,
+        Max = 120,
+        Default = 70,
+        Callback = function(value)
+        current_camera = value
+            print("Field Of View:", value)
+        end
+    })
+end
+
+--// Ability vulnerability
+do
+    local ability_vulnerability = TabFrame2:NewSection({
+        Title = 'Ability Vulnerability',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'left'
+    })
+    
+    local ability_vulnerability_mode = ability_vulnerability:NewDropdown({
+        Title = "Mode",
+        Data = {"Continuity Zero", "Quad Jump", "Quasar"},
+        Default = "Continuity Zero",
+        Callback = function(value)
+        ability_vulnerability_enabled = value
+            print("Ability Vulnerability Mode Selected:", value)
+        end
+    })
+end
+
+--// Animations
+do
+    local animations = TabFrame2:NewSection({
+        Title = 'Animations',
+        Icon = 'rbxassetid://7743869054',
+        Position = 'right'
+    })
+
+    local smart_animations = animations:NewToggle({
+        Title = 'Smart Animations',
+        Default = false,
+        Callback = function(state)
+        smart_animations_enabled = state
+            print("Smart Animations toggled:", state)
+        end
+    })
+
+    -- Ensure emote dropdown is populated correctly
+    local dropdown_emotes_table = {}
+    local emote_instances = {}
+
+    if ReplicatedStorage and ReplicatedStorage.Misc and ReplicatedStorage.Misc.Emotes then
+        for _, emote in ipairs(ReplicatedStorage.Misc.Emotes:GetChildren()) do
+            local emote_name = emote:GetAttribute('EmoteName')
+
+            if emote_name then
+                table.insert(dropdown_emotes_table, emote_name)
+                emote_instances[emote_name] = emote
+            end
+        end
+    else
+        warn("ReplicatedStorage.Misc.Emotes not found!")
+    end
+
+    -- Check if emote dropdown exists before creating it
+    if #dropdown_emotes_table > 0 then
+        local animation_type = animations:NewDropdown({
+            Title = "Animation",
+            Data = dropdown_emotes_table,
+            Default = dropdown_emotes_table[1],  -- Default to the first choice if available
+            Callback = function(value)
+            current_animation = value
+                print("Animation Selected:", value)
+            end
+        })
+    else
+        warn("No emotes found for dropdown!")
+    end
+end
+
+-- Handling Idle state
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.zero)
+end)
 
 setfpscap(200)
 
@@ -928,638 +1562,6 @@ RunService.PreSimulation:Connect(function()
     AutoParry.entity_properties.dot = AutoParry.entity_properties.is_moving and math.max(AutoParry.entity_properties.direction:Dot(target_velocity.Unit), 0)
 end)
 
-local LocalPlayer = Players.LocalPlayer
-
-local Windows = NothingLibrary.new({
-	Title = "Vico - NeuX",
-	Description = "Vico - Blade Ball - Test",
-	Keybind = Enum.KeyCode.LeftControl,
-	Logo = 'http://www.roblox.com/asset/?id=18898582662'
-})
-
-local TabFrame = Windows:NewTab({
-	Title = "Main",
-	Description = "very cool and awesome",
-	Icon = "rbxassetid://7733960981"
-})
-
-
---// auto parry section
-
-do
-    local AutoSection = TabFrame:NewSection({
-        Title = "Parry",
-        Icon = "rbxassetid://7743869054",
-        Position = "Left"
-    })
-
-    AutoSection:NewToggle({
-		Title = "AutoParry",
-		Default = false,
-		Callback = function(state)
-                auto_parry_enabled = state
-	        print("Autoparry:", state)
-		end
-	})
-
-    -- Toggle for auto parry rotation
-    AutoSection:NewToggle({
-        Title = "Rotation",
-        Default = false,
-        Callback = function(state)
-        auto_parry_rotation_enabled = state
-            print("Auto Parry Rotation:", tr)
-        end
-    })
-
-    -- Slider for auto parry rotation acuity
-    AutoSection:NewSlider({
-        Title = "Acuity",
-        Min = 1,
-        Max = 10,
-        Default = 5,
-        Callback = function(value)
-            auto_parry_rotation_acuity_value = value
-            print("Auto Parry Rotation Acuity:", value)
-        end
-    })
-
-    -- Dropdown for selecting curve method
-    AutoSection:NewDropdown({
-        Title = "Curve Method",
-        Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
-        Default = "Linear",
-        Callback = function(value)
-            current_curve = value
-            print("Selected Curve Method:", selected)
-        end
-    })
-end
-
-
---// Win Sound
-
-do
-	local WinSoundSection = TabFrame:NewSection({
-		Title = "Win Sound",
-		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
-		Position = "Right"
-	})
-
-	WinSoundSection:NewToggle({
-		Title = "Enable Win Sound",
-		Default = false,
-		Callback = function(state)
-                win_sound_enabled = state
-			print("Win Sound Enabled:", state)
-		end
-	})
-end
-
---// Hit Sound
-
-do
-	local HitSoundSection = TabFrame:NewSection({
-		Title = "Hit Sound",
-		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
-		Position = "Right"
-	})
-
-	HitSoundSection:NewToggle({
-		Title = "Enable Hit Sound",
-		Default = false,
-		Callback = function(state)
-                hit_sound_enabled = state
-			print("Hit Sound Enabled:", state)
-		end
-	})
-end
-
---// No Slow
-
-do
-	local NoSlowSection = TabFrame:NewSection({
-		Title = "No Slow",
-		Icon = "rbxassetid://7743869054", -- gunakan ikon yang sesuai jika ada
-		Position = "Right"
-	})
-
-	NoSlowSection:NewToggle({
-		Title = "Enable No Slow",
-		Default = false,
-		Callback = function(state)
-                no_slow_enabled = state
-			print("No Slow Enabled:", state)
-		end
-	})
-end
-
-local TabFrame1 = Windows:NewTab({
-	Title = "Visual",
-	Description = "Good Visual",
-	Icon = "rbxassetid://7733960981"
-})
-
---// No Render
-
-do
-	local NoRenderSection = TabFrame1:NewSection({
-		Title = "No Render",
-		Icon = "rbxassetid://7743869054",
-		Position = "Right"
-	})
-
-	NoRenderSection:NewToggle({
-		Title = "Enable No Render",
-		Default = false,
-		Callback = function(state)
-                no_render_enabled = state
-			print("No Render Enabled:", state)
-		end
-	})
-
-	NoRenderSection:NewToggle({
-		Title = "Smart No Render",
-		Default = false,
-		Callback = function(state)
-                smart_no_render_enabled = state
-			print("Smart No Render Enabled:", state)
-		end
-	})
-end
-
---// Shaders
-
-do
-	local ShadersSection = TabFrame1:NewSection({
-		Title = "Shaders",
-		Icon = "rbxassetid://7743869054",
-		Position = "Left"
-	})
-
-        ShadersSection:NewToggle({
-		Title = "Shaders",
-		Default = false,
-		Callback = function(state)
-                shaders_enabled = state
-			print("Shaders Enabled:", state)
-		end
-	})
-
-	ShadersSection:NewSlider({
-		Title = "Intensity",
-		Min = 0,
-		Max = 150,
-		Default = 1,
-		Callback = function(value)
-                shaders_intensity_value = value
-			print("Shader Intensity:", value)
-		end
-	})
-
-	ShadersSection:NewSlider({
-		Title = "Size",
-		Min = 0,
-		Max = 100,
-		Default = 15,
-		Callback = function(value)
-                shaders_size_value = value
-			print("Shader Size:", value)
-		end
-	})
-
-	ShadersSection:NewSlider({
-		Title = "Threshold",
-		Min = 0,
-		Max = 135,
-		Default = 1,
-		Callback = function(value)
-                shaders_threshold_value = value
-			print("Shader Threshold:", value)
-		end
-	})
-
-	ShadersSection:NewSlider({
-		Title = "Diffuse Scale",
-		Min = 0,
-		Max = 100,
-		Default = 1,
-		Callback = function(value)
-                environment_diffuse_scale_value = value
-			print("Diffuse Scale:", value)
-		end
-	})
-
-	ShadersSection:NewSlider({
-		Title = "Specular Scale",
-		Min = 0,
-		Max = 100,
-		Default = 1,
-		Callback = function(value)
-                environment_specular_scale_value = value
-			print("Specular Scale:", value)
-		end
-	})
-
-	ShadersSection:NewToggle({
-		Title = "Enable Ray Tracing",
-		Default = false,
-		Callback = function(state)
-                shaders_raytracing_enabled = state
-			print("Ray Tracing Enabled:", state)
-		end
-	})
-end
-
---// Ambient
-
-do
-	local AmbientSection = TabFrame1:NewSection({
-		Title = "Ambient",
-		Icon = "rbxassetid://7743869054",
-		Position = "Right"
-	})
-
-        AmbientSection:NewToggle({
-		Title = "Ambient",
-		Default = false,
-		Callback = function(state)
-                ambient_enabled = state
-			print("Ambient Enabled:", state)
-		end
-	})
-
-	AmbientSection:NewSlider({
-		Title = "Density",
-		Min = 0,
-		Max = 100,
-		Default = 50,
-		Callback = function(value)
-                density_strength = value
-                density_strength = value
-			print("Ambient Density:", value)
-		end
-	})
-end
-
---// Night Mode
-
-do
-	local NightModeSection = TabFrame1:NewSection({
-		Title = "Night Mode",
-		Icon = "rbxassetid://7743869054",
-		Position = "Left"
-	})
-
-	NightModeSection:NewToggle({
-		Title = "Enable Night Mode",
-		Default = false,
-		Callback = function(state)
-                night_mode_enabled = state
-			print("Night Mode Enabled:", state)
-		end
-	})
-end
-
---// Plushie
-
-do
-	local PlushieSection = TabFrame1:NewSection({
-		Title = "Plushie",
-		Icon = "rbxassetid://7743869054",
-		Position = "Right"
-	})
-
-        PlushieSection:NewToggle({
-		Title = "Ambient",
-		Default = false,
-		Callback = function(state)
-                plushie_enabled = state
-			print("Plushie Enabled:", state)
-		end
-	})
-
-	PlushieSection:NewDropdown({
-		Title = "Plushie Type",
-		Data = {"Pillow", "Touhou", "Shion", "Miku", "Sino", "Soi"},
-		Default = "Pillow",
-		Callback = function(value)
-                selected_plushie = value
-			print("Plushie Type Selected:", value)
-		end
-	})
-end
-
---// Color Shift
-
-do
-	local ColorShiftSection = TabFrame1:NewSection({
-		Title = "Color Shift",
-		Icon = "rbxassetid://7743869054",
-		Position = "Right"
-	})
-
-	ColorShiftSection:NewToggle({
-		Title = "Enable Color Shift",
-		Default = false,
-		Callback = function(state)
-                color_shift_enabled = state
-			print("Color Shift Enabled:", state)
-		end
-	})
-end
-
---// Skybox
-
-do
-	local SkyboxSection = TabFrame1:NewSection({
-		Title = "Skybox",
-		Icon = "rbxassetid://7743869054",
-		Position = "Left"
-	})
-
-	SkyboxSection:NewToggle({
-		Title = "Remove Clouds",
-		Default = false,
-		Callback = function(state)
-                skybox_enabled = state
-			print("Skybox Enabled:", state)
-		end
-	})
-
-	SkyboxSection:NewDropdown({
-		Title = "Skybox Type",
-		Data = {"Anime", "Rufus", "Fantasy", "Angelic", "Clouded", "Lyfestyle", "Deepspace", "Spongebob", "Morning Mudd", "Met Tha Devil"},
-		Default = "Anime",
-		Callback = function(value)
-                selected_skybox = value
-			print("Skybox Type Selected:", value)
-		end
-	})
-end
-
---// Trail
-
-do
-	local TrailSection = TabFrame1:NewSection({
-		Title = "Trail",
-		Icon = "rbxassetid://7743869054",
-		Position = "Right"
-	})
-
-        TrailSection:NewToggle({
-		Title = "Trail",
-		Default = false,
-		Callback = function(state)
-                trail_enabled = state
-			print("Trail Enabled:", state)
-		end
-	})
-
-	TrailSection:NewSlider({
-		Title = "Scale",
-		Min = 0,
-		Max = 100,
-		Default = 30,
-		Callback = function(value)
-                trail_scale = value
-			print("Trail Scale:", value)
-		end
-	})
-end
-
---// Hit Effect
-
-do
-	local HitEffectSection = TabFrame1:NewSection({
-		Title = "Hit Effect",
-		Icon = "rbxassetid://7743869054",
-		Position = "Left"
-	})
-
-	HitEffectSection:NewToggle({
-		Title = "Enable Hit Effect",
-		Default = false,
-		Callback = function(state)
-                hit_effect_enabled = state
-			print("Hit Effect Enabled:", state)
-		end
-	})
-end
-
---// Misc tab
-local TabFrame2 = Windows:NewTab({
-    Title = "Misc",
-    Description = "Here Y'go Misc.",
-    Icon = "rbxassetid://7733960981"
-})
-
---// Auto rewards
-do
-    local auto_rewards = TabFrame2:NewSection({
-        Title = 'Auto Rewards',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'right'
-    })
-    
-    auto_rewards:NewToggle({
-        Title = "Enable Auto Rewards",
-        Default = false,
-        Callback = function(state)
-        auto_rewards_enabled = state
-            print("Auto Rewards toggled:", state)
-        end
-    })
-end
-
---// Strafe
-do
-    local strafe = TabFrame2:NewSection({
-        Title = 'Strafe',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'left'
-    })
-
-    strafe:NewToggle({
-		Title = "strafe",
-		Default = false,
-		Callback = function(state)
-                strafe_enabled = state
-			print("Strafe Enabled:", state)
-		end
-	})
-
-     strafe:NewSlider({
-        Title = "Speed",
-        Min = 1,
-        Max = 100,
-        Default = 1,
-        Callback = function(value)
-        strength = value
-            print("Strafe Speed:", value)
-        end
-    })
-end
-
---// Personnel detector
-do
-    local personnel_detector = TabFrame2:NewSection({
-        Title = 'Personnel Detector',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'right'
-    })
-
-    personnel_detector:NewToggle({
-		Title = "detector smart",
-		Default = false,
-		Callback = function(state)
-personnel_detector_enabled = state
-			print("Personnel Detect Enabled:", state)
-		end
-	})
-
-    personnel_detector:NewToggle({
-        Title = 'Auto Leave',
-        Default = false,
-        Callback = function(state)
-personnel_detector_auto_leave_enabled = state
-            print("Auto Leave Enabled:", state)
-        end
-    })
-end
-
---// Gravity
-do
-    local gravity = TabFrame2:NewSection({
-        Title = 'Gravity',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'left'
-    })
-
-    gravity:NewToggle({
-		Title = "gravity",
-		Default = false,
-		Callback = function(state)
-                gravity_enabled = state
-			print("Gravity Enabled:", state)
-		end
-	})
-
-    gravity:NewSlider({
-        Title = 'Gravity Strength',
-        Min = 1,
-        Max = 100,
-        Default = 1,
-        Callback = function(value)
-        strength = value
-            print("Gravity Strength:", value)
-        end
-    })
-end
-
---// Camera
-do
-    local camera = TabFrame2:NewSection({
-        Title = 'Camera',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'right'
-    })
-
-    camera:NewToggle({
-		Title = 'camera',
-		Default = false,
-		Callback = function(state)
-                camera_enabled = state
-			print("camera Enabled:", state)
-		end
-	})
-
-     camera:NewSlider({
-        Title = 'Field Of View',
-        Min = 10,
-        Max = 120,
-        Default = 70,
-        Callback = function(value)
-        current_camera = value
-            print("Field Of View:", value)
-        end
-    })
-end
-
---// Ability vulnerability
-do
-    local ability_vulnerability = TabFrame2:NewSection({
-        Title = 'Ability Vulnerability',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'left'
-    })
-    
-    local ability_vulnerability_mode = ability_vulnerability:NewDropdown({
-        Title = "Mode",
-        Data = {"Continuity Zero", "Quad Jump", "Quasar"},
-        Default = "Continuity Zero",
-        Callback = function(value)
-        ability_vulnerability_enabled = value
-            print("Ability Vulnerability Mode Selected:", value)
-        end
-    })
-end
-
---// Animations
-do
-    local animations = TabFrame2:NewSection({
-        Title = 'Animations',
-        Icon = 'rbxassetid://7743869054',
-        Position = 'right'
-    })
-
-    local smart_animations = animations:NewToggle({
-        Title = 'Smart Animations',
-        Default = false,
-        Callback = function(state)
-        smart_animations_enabled = state
-            print("Smart Animations toggled:", state)
-        end
-    })
-
-    -- Ensure emote dropdown is populated correctly
-    local dropdown_emotes_table = {}
-    local emote_instances = {}
-
-    if ReplicatedStorage and ReplicatedStorage.Misc and ReplicatedStorage.Misc.Emotes then
-        for _, emote in ipairs(ReplicatedStorage.Misc.Emotes:GetChildren()) do
-            local emote_name = emote:GetAttribute('EmoteName')
-
-            if emote_name then
-                table.insert(dropdown_emotes_table, emote_name)
-                emote_instances[emote_name] = emote
-            end
-        end
-    else
-        warn("ReplicatedStorage.Misc.Emotes not found!")
-    end
-
-    -- Check if emote dropdown exists before creating it
-    if #dropdown_emotes_table > 0 then
-        local animation_type = animations:NewDropdown({
-            Title = "Animation",
-            Data = dropdown_emotes_table,
-            Default = dropdown_emotes_table[1],  -- Default to the first choice if available
-            Callback = function(value)
-            current_animation = value
-                print("Animation Selected:", value)
-            end
-        })
-    else
-        warn("No emotes found for dropdown!")
-    end
-end
-
--- Handling Idle state
-LocalPlayer.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.zero)
-end)
 
 local current_animation = nil
 local current_animation_name = nil
