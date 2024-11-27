@@ -1073,6 +1073,14 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
         return
     end
 
+    -- Periksa cooldown
+    if ball_properties.cooldown then
+        return
+    end
+
+    -- Tandai cooldown untuk mencegah double parry
+    ball_properties.cooldown = true
+
     -- Performa Auto Parry
     AutoParry.perform_parry()
 
@@ -1086,10 +1094,9 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
         ball_properties.cooldown = false
     end)
 
-    -- Server Fallback jika ping tinggi
-    if ping > 100 then
+    -- Kirim data ke server hanya jika ping tinggi
+    if ping > 100 and not ball_properties.cooldown then
         task.defer(function()
-            -- Kirim data ke server untuk parry
             AutoParry.send_to_server({
                 speed = ball_properties.speed,
                 distance = ball_properties.distance,
