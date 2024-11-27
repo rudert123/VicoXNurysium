@@ -222,6 +222,8 @@ Player.Entity = {
     },
 }
 
+local World = {}
+
 -- Deklarasi AutoParry.ball
 AutoParry.ball = {
 	training_ball_entity = nil,
