@@ -245,6 +245,10 @@ AutoParry.target = {
     aim = nil,
 }
 
+AutoParry.current.from.aim = {
+    Name = nil,
+}
+
 -- Deklarasi AutoParry.entity_properties
 AutoParry.entity_properties = {
     server_position = Vector3.zero,
@@ -1050,7 +1054,7 @@ ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) /
 
 	task.spawn(function()
 		repeat
-			RunService.Heartbeat:Wait()
+			RunService.PreSimulation:Wait(0)
 		until 
 			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
 
