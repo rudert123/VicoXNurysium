@@ -171,18 +171,6 @@ local LocalPlayer = Players.LocalPlayer
 
 local interface = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/EvadeAutoBHOP/main/libs/ef.java'))()
 
-local assets = game:GetObjects('rbxassetid://98657300657778')[1]
-
-assets.Parent = RobloxReplicatedStorage
-
-local objects_folder = assets.objects
-local sounds_folder = assets.sounds
-
-local watermark_asset = gui_folder.watermark
-local watermark = watermark_asset:Clone()
-
-local color_shift_effect = Instance.new('ColorCorrectionEffect', assets)
-
 local RunTime = workspace.Runtime
 local Alive = workspace.Alive
 local Dead = workspace.Dead
