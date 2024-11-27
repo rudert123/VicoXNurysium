@@ -675,7 +675,7 @@ function AutoParry:is_spam()
 		old_from_target = AutoParry.target.from
 	end
 
-	if self.parries < 3 and AutoParry.target.from == old_from_target then
+	if self.parries < 4 and AutoParry.target.from == old_from_target then
 		return false
 	end
 
@@ -685,8 +685,8 @@ function AutoParry:is_spam()
 	local ball_properties = AutoParry.ball.properties
 	local reach_time = ball_properties.distance / ball_properties.maximum_speed - (player_ping / 1000)
 
-	if (tick() - self.last_hit) > 0.8 and self.entity_distance > distance_threshold and self.parries < 2 then
-		self.parries = 1
+	if (tick() - self.last_hit) > 0.8 and self.entity_distance > distance_threshold and self.parries < 3 then
+		self.parries = 2
 
 		return false
 	end
@@ -700,8 +700,8 @@ function AutoParry:is_spam()
 	end
 
 	if (tick() - ball_properties.last_warping) < (reach_time / 1.3) and self.entity_distance > distance_threshold and self.parries < 3 then
-		if self.parries > 2 then
-			self.parries = 1
+		if self.parries > 3 then
+			self.parries = 2
 		end
 
 		return false
@@ -728,24 +728,24 @@ function AutoParry:is_spam()
 	end
 
 	if self.entity_distance > self.range and self.entity_distance > distance_threshold then
-		if self.parries > 2 then
-			self.parries = 1
+		if self.parries > 3 then
+			self.parries = 2
 		end
 
 		return false
 	end
 
 	if self.ball_distance > self.range and self.entity_distance > distance_threshold then
-		if self.parries > 2 then
-			self.parries = 1
+		if self.parries > 3 then
+			self.parries = 2
 		end
 
 		return false
 	end
 
 	if self.last_position_distance > self.spam_accuracy and self.entity_distance > distance_threshold then
-		if self.parries > 2 then
-			self.parries = 1
+		if self.parries > 3 then
+			self.parries = 2
 		end
 
 		return false
@@ -990,7 +990,7 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
 	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.4
-    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi + ping_threshold
+    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
 		ball_properties.parry_range += 11
@@ -1135,7 +1135,7 @@ local function optimizePerformance()
     game:GetService("Lighting").Brightness = 2 -- Adjust lighting for smoothness
     game:GetService("Lighting").OutdoorAmbient = Color3.fromRGB(0, 0, 0) -- Adjust ambient light for performance
     game:GetService("UserInputService").MouseDeltaSensitivity = 0.5 -- Reduce mouse lag
-    setfpscap(120) -- Increase FPS cap to 120 for smoother performance
+    setfpscap(60) -- Increase FPS cap to 120 for smoother performance
 
     -- Anti-render and unnecessary object loading optimization
     local function disableUnnecessaryRender()
@@ -1158,9 +1158,9 @@ local function optimizePerformance()
     -- Optimize memory usage
     local function optimizeMemoryUsage()
         local serviceMemoryLimits = {
-            ['Players'] = 2048,
-            ['Workspace'] = 2048,
-            ['ReplicatedStorage'] = 2048,
+            ['Players'] = 4048,
+            ['Workspace'] = 4048,
+            ['ReplicatedStorage'] = 4048,
             -- Add more services as needed
         }
 
