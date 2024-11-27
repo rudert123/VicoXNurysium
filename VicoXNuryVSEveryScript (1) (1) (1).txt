@@ -418,7 +418,7 @@ function resolve_parry_Remote()
         if found then
             break
         end
-        wait(0.1) -- Interval pencarian
+        wait(0) -- Interval pencarian
     end
 
     if not AutoParry.ball.properties.parry_remote then
@@ -664,7 +664,7 @@ end
 
 local old_from_target = nil :: Model
 
-function AutoParry:is_spam() --// im autistic 😁
+function AutoParry:is_spam()
 	local target = AutoParry.target.current
 
 	if not target then
@@ -685,29 +685,29 @@ function AutoParry:is_spam() --// im autistic 😁
 	local ball_properties = AutoParry.ball.properties
 	local reach_time = ball_properties.distance / ball_properties.maximum_speed - (player_ping / 1000)
 
-	if (tick() - self.last_hit) > 0.8 and self.entity_distance > distance_threshold and self.parries < 3 then
+	if (tick() - self.last_hit) > 0.8 and self.entity_distance > distance_threshold and self.parries < 2 then
 		self.parries = 1
 
 		return false
 	end
 
  	if ball_properties.lerp_radians > 0.028 then
-		if self.parries > 3 then
+		if self.parries > 2 then
 			self.parries = 1
 		end
 
 		return false
 	end
 
-	if (tick() - ball_properties.last_warping) < (reach_time / 1.3) and self.entity_distance > distance_threshold and self.parries < 4 then
-		if self.parries > 3 then
+	if (tick() - ball_properties.last_warping) < (reach_time / 1.3) and self.entity_distance > distance_threshold and self.parries < 3 then
+		if self.parries > 2 then
 			self.parries = 1
 		end
 
 		return false
 	end
 
-	if math.abs(self.speed - self.old_speed) < 5.2 and self.entity_distance > distance_threshold and self.speed < 60 and self.parries < 3 then
+	if math.abs(self.speed - self.old_speed) < 5.2 and self.entity_distance > distance_threshold and self.speed < 60 and self.parries < 2 then
 		if self.parries > 3 then
 			self.parries = 0
 		end
@@ -737,15 +737,15 @@ function AutoParry:is_spam() --// im autistic 😁
 
 	if self.ball_distance > self.range and self.entity_distance > distance_threshold then
 		if self.parries > 2 then
-			self.parries = 2
+			self.parries = 1
 		end
 
 		return false
 	end
 
 	if self.last_position_distance > self.spam_accuracy and self.entity_distance > distance_threshold then
-		if self.parries > 4 then
-			self.parries = 2
+		if self.parries > 2 then
+			self.parries = 1
 		end
 
 		return false
@@ -956,11 +956,12 @@ ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function(slash: 
 	end
 end)
 
-ConnectionsManager['auto_parry'] = RunService:BindToRenderStep("auto_parry",Enum.RenderPriority.First.Value,function()
-local auto_parry_enabled = interface.flags['auto_parry']
+ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
+	local auto_parry_enabled = interface.flags['auto_parry']
 
-if not auto_parry_enabled then
+	if not auto_parry_enabled then
 		AutoParry.reset()
+
         return
     end
 
@@ -984,12 +985,12 @@ if not auto_parry_enabled then
 
 	ball_properties.is_curved = AutoParry.is_curved()
 	
-	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
+	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 15.5)
 	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
-	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
-ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
+	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.4
+    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
 		ball_properties.parry_range += 11
@@ -1059,39 +1060,6 @@ ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) /
 			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
 
 		ball_properties.cooldown = false
-	end)
-end)
-
-task.defer(function()
-	RunTime.ChildAdded:Connect(function(child)
-		local no_render_enabled = interface.flags['no_render']
-	
-		local smart_no_render_enabled = interface.flags['smart_no_render']
-		local ability_vulnerability_enabled = interface.flags['ability_vulnerability']
-
-		if no_render_enabled then
-            if AutoParry.ball.properties.auto_spam then
-				AutoParry.perform_parry()
-			end
-
-			if (smart_no_render_enabled and not ability_vulnerability_enabled) and not AutoParry.ball.properties.auto_spam then
-				LocalPlayer.PlayerScripts.EffectScripts.ClientFX.Enabled = true
-
-				return
-			end
-
-			LocalPlayer.PlayerScripts.EffectScripts.ClientFX.Enabled = false
-
-			if child.Name == 'Tornado' then
-				return
-			end
-
-			Debris:AddItem(child, 0)
-
-			return
-		end
-
-		LocalPlayer.PlayerScripts.EffectScripts.ClientFX.Enabled = true
 	end)
 end)
 
