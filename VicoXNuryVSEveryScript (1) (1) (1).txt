@@ -324,6 +324,13 @@ local function linear_predict(a: any, b: any, time_volume: number)
     return a + (b - a) * time_volume
 end
 
+function World:get_pointer()
+    local mouse_location = UserInputService:GetMouseLocation()
+    local ray = workspace.CurrentCamera:ScreenPointToRay(mouse_location.X, mouse_location.Y, 0)
+
+    return CFrame.lookAt(ray.Origin, ray.Origin + ray.Direction)
+end
+
 function AutoParry.get_ball()
     -- Iterate through all children under the "Balls" folder in the workspace
     for _, ball in pairs(workspace:WaitForChild("Balls"):GetChildren()) do
