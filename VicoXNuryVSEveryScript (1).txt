@@ -739,8 +739,7 @@ end
 
 local old_from_target = nil :: Model
 
-function AutoParry:is_spam() 
-
+function AutoParry:is_spam() --// im autistic 😁
 	local target = AutoParry.target.current
 
 	if not target then
@@ -844,56 +843,6 @@ function AutoParry:is_spam()
 	end
 
     return true	
-end
-
-function Player:claim_rewards()
-	repeat
-		task.wait(1)
-	until not AutoParry.ball.properties.auto_spam
-
-	local net = ReplicatedStorage:WaitForChild("Packages")['_Index']['sleitnick_net@0.1.0'].net
-
-	ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RemoteEvent"):FireServer('ClaimLoginReward')
-	
-	task.defer(function()
-		for day = 1, 30 do
-			task.wait()
-
-			ReplicatedStorage.Remote.RemoteFunction:InvokeServer('ClaimNewDailyLoginReward', day)
-
-			net:WaitForChild("RE/SummerWheel/ProcessRoll"):FireServer()
-			net:WaitForChild("RE/SummerWheel/ClaimReward"):FireServer()
-
-			net:WaitForChild("RE/ProcessTournamentEventRoll"):FireServer()
-			net:WaitForChild("RE/CyborgWheel/ProcessRoll"):FireServer()
-			net:WaitForChild("RE/SynthWheel/ProcessRoll"):FireServer()
-			net:WaitForChild("RE/ProcessTournamentRoll"):FireServer()
-			net:WaitForChild("RE/RolledReturnCrate"):FireServer()
-			net:WaitForChild("RE/ProcessLTMRoll"):FireServer()
-		end
-	end)
-
-	task.defer(function()
-		for reward = 1, 6 do
-			net:WaitForChild("RF/ClaimPlaytimeReward"):InvokeServer(reward)
-			net:WaitForChild("RE/ClaimSeasonPlaytimeReward"):FireServer(reward)
-
-			ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RemoteFunction"):InvokeServer('SpinWheel')
-			net:WaitForChild("RE/SpinFinished"):FireServer()
-		end
-	end)
-
-	task.defer(function()
-		for reward = 1, 5 do
-			net:WaitForChild("RF/RedeemQuestsType"):InvokeServer('SummerClashEvent', 'Daily', reward)
-		end
-	end)
-
-	task.defer(function()
-		for reward = 1, 4 do
-			net:WaitForChild("RE/SummerWheel/ClaimStreakReward"):FireServer(reward)
-		end
-	end)
 end
 
 RunService:BindToRenderStep('server position simulation', 1, function()
@@ -1083,115 +1032,107 @@ end)
 ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 	local auto_parry_enabled = interface.flags['auto_parry']
 
-	if not auto_parry_rotation_enabled then
-		return
-	end
-
-	local character = LocalPlayer.Character
-
-	if not character then
-		return
-	end
-
-	if not character.PrimaryPart then
-		return
-	end
-
-	local humanoid = character:FindFirstChildOfClass('Humanoid')
-
-	if not humanoid or humanoid.Health <= 0 then
-		return
-	end
-
-	if Dead:FindFirstChild(LocalPlayer.Name) then
-		humanoid.AutoRotate = true
-
-		return
-	end
-
-	local ball = AutoParry.get_ball()
-
-	if not ball then
-		return
-	end
-
-	local auto_parry_rotation_acuity_value = interface.flags['auto_parry_rotation_acuity'] / 100
-
-	local ball_properties = AutoParry.ball.properties
-
-	if AutoParry.ball.properties.speed < 10 or AutoParry.ball.properties.distance < 20 + ball_properties.speed / 2 then
-		look_at(character.PrimaryPart, ball_properties.rotation, auto_parry_rotation_acuity_value / 2, 25)
-
-		return
-	end
-
-	look_at(character.PrimaryPart, ball_properties.rotation, auto_parry_rotation_acuity_value, 25)
-end)
-
-ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
-    -- Mengecek apakah fitur AutoParry diaktifkan
-    if not interface.flags['auto_parry'] then
-        AutoParry.reset()
+if not auto_parry_enabled then
+		AutoParry.reset()
         return
     end
 
-    -- Mendapatkan karakter pemain lokal
-    local Character = LocalPlayer.Character
-    if not Character or Character.Parent == Dead then
-        AutoParry.reset()
+	local Character = LocalPlayer.Character
+
+	if not Character then
+		return
+	end
+
+    if Character.Parent == Dead then
+		AutoParry.reset()
+		
         return
     end
 
-    -- Memastikan entitas bola tersedia
     if not AutoParry.ball.ball_entity then
         return
     end
 
-    -- Mendapatkan properti bola
-    local ball_properties = AutoParry.ball.properties
+	local ball_properties = AutoParry.ball.properties
 
-    -- Menentukan apakah bola melengkung
-    ball_properties.is_curved = AutoParry.is_curved()
+	ball_properties.is_curved = AutoParry.is_curved()
+	
+	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
+	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
+	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
-    -- Mengatur threshold berdasarkan ping
-    local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
-    local parry_accuracy = ball_properties.maximum_speed / 11.5 + ping_threshold
-    ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
+	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.3
+    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi
 
-    -- Menyesuaikan jika pemain menggunakan Titan Blade
-    if Player.Entity.properties.sword == 'Titan Blade' then
-        ball_properties.parry_range += 11
+	if Player.Entity.properties.sword == 'Titan Blade' then
+		ball_properties.parry_range += 11
+		ball_properties.spam_range += 2
+	end	
+
+	local distance_to_last_position = LocalPlayer:DistanceFromCharacter(ball_properties.last_position)
+
+	if ball_properties.auto_spam and AutoParry.target.current then
+		ball_properties.auto_spam = AutoParry.is_spam({
+			speed = ball_properties.speed,
+			spam_accuracy = spam_accuracity,
+			parries = ball_properties.parries,
+			ball_speed = ball_properties.speed,
+			range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
+			last_hit = ball_properties.last_hit,
+			ball_distance = ball_properties.distance,
+			maximum_speed = ball_properties.maximum_speed,
+			old_speed = AutoParry.ball.properties.old_speed,
+			entity_distance = AutoParry.entity_properties.distance,
+			last_position_distance = distance_to_last_position,
+		})
+	end
+
+	if ball_properties.auto_spam then
+        return
     end
 
-    -- Menghitung jarak dari posisi bola ke pemain
-    local distance_to_ball = ball_properties.distance
+	if AutoParry.target.current and AutoParry.target.current.Name == LocalPlayer.Name then
+		ball_properties.auto_spam = AutoParry.is_spam({
+			speed = ball_properties.speed,
+			spam_accuracy = spam_accuracity,
+			parries = ball_properties.parries,
+			ball_speed = ball_properties.speed,
+			range = ball_properties.spam_range,
+			last_hit = ball_properties.last_hit,
+			ball_distance = ball_properties.distance,
+			maximum_speed = ball_properties.maximum_speed,
+			old_speed = AutoParry.ball.properties.old_speed,
+			entity_distance = AutoParry.entity_properties.distance,
+			last_position_distance = distance_to_last_position,
+		})
+	end
 
-    -- Debug penting: jarak bola dan parry range
-    print("Distance to ball:", distance_to_ball, "Parry range:", ball_properties.parry_range)
-
-    -- Mengevaluasi kondisi untuk melakukan parry
-    if not ball_properties.is_curved and distance_to_ball <= ball_properties.parry_range then
-        -- Debug: Kondisi parry terpenuhi
-        print("Kondisi parry terpenuhi. Distance to ball:", distance_to_ball)
-
-        -- Melakukan parry
-        AutoParry.perform_parry()
-
-        -- Mengatur cooldown setelah parry
-        task.spawn(function()
-            repeat
-                RunService.PreSimulation:Wait(0)
-            until (tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
-            ball_properties.cooldown = false
-        end)
-    else
-        -- Debug: Alasan parry tidak dilakukan
-        if ball_properties.is_curved then
-            print("Parry gagal: Bola melengkung.")
-        elseif distance_to_ball > ball_properties.parry_range then
-            print("Parry gagal: Jarak terlalu jauh.")
-        end
+	if ball_properties.auto_spam then
+        return
     end
+	
+	if ball_properties.is_curved then
+        return
+    end
+
+	if ball_properties.distance > ball_properties.parry_range and ball_properties.distance > parry_accuracity then
+        return
+    end
+	
+	if AutoParry.target.current and AutoParry.target.current ~= LocalPlayer.Character then
+        return
+    end
+
+	AutoParry.perform_parry()
+
+	task.spawn(function()
+		repeat
+			RunService.PreSimulation:Wait(0)
+		until 
+			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
+
+		ball_properties.cooldown = false
+	end)
 end)
 
 task.defer(function()
