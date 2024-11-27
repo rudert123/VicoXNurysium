@@ -8,8 +8,6 @@ local VirtualUser = game:GetService('VirtualUser')
 local HttpService = game:GetService('HttpService')
 local RunService = game:GetService('RunService')
 local LogService = game:GetService('LogService')
-local Lighting = game:GetService('Lighting')
-local CoreGui = game:GetService('CoreGui')
 local Players = game:GetService('Players')
 local Debris = game:GetService('Debris')
 local Stats = game:GetService('Stats')
@@ -86,11 +84,8 @@ end)
 
 local LocalPlayer = Players.LocalPlayer
 
-getgenv().visualize_Enabled = false
-
 local NothingLibrary = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/3345-c-a-t-s-u-s/NOTHING/main/source.lua'))();
 
-local crypter = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Egor-Skriptunoff/pure_lua_SHA/master/sha2.lua'), true))()
 local notify = NothingLibrary.Notification();
 
 notify.new({
@@ -166,27 +161,6 @@ do
     })
 end
 
--- Visual Tab
-local TabFrame = Windows:NewTab({
-	Title = "Visual",
-	Description = "Visual Settings",
-	Icon = "rbxassetid://7733774602"
-})
-
-local Section = TabFrame:NewSection({
-	Title = "Visual Section",
-	Icon = "rbxassetid://7743869054",
-	Position = "Left"
-})
-
-Section:NewToggle({
-	Title = "Visualizer",
-	Default = false,
-	Callback = function(toggled)
-		getgenv().visualize_Enabled = toggled
-	end
-})
-
 -- Handling Idle state
 LocalPlayer.Idled:Connect(function()
     VirtualUser:CaptureController()
@@ -194,19 +168,6 @@ LocalPlayer.Idled:Connect(function()
 end)
 
 local LocalPlayer = Players.LocalPlayer
-
-local client_id = RbxAnalyticsService:GetClientId()
-
-local names_map = {
-	['protected'] = crypter.sha3_384(client_id, 'sha3-256'),
-	
-	['Pillow'] = crypter.sha3_384(client_id .. 'Pillow', 'sha3-256'),
-	['Touhou'] = crypter.sha3_384(client_id .. 'Touhou', 'sha3-256'),
-	['Shion'] = crypter.sha3_384(client_id .. 'Shion', 'sha3-256'),
-	['Miku'] = crypter.sha3_384(client_id .. 'Miku', 'sha3-256'),
-	['Sino'] = crypter.sha3_384(client_id .. 'Sino', 'sha3-256'),
-	['Soi'] = crypter.sha3_384(client_id .. 'Soi', 'sha3-256')
-}
 
 local interface = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/EvadeAutoBHOP/main/libs/ef.java'))()
 
@@ -306,60 +267,6 @@ AutoParry.entity_properties = {
 	speed = 0,
 	dot = 0
 }
-
-local self = AutoParry.get_ball()
-	wait(0.1)
-	local Visualize = Instance.new("Part",workspace)
-	local Visualize1 = Instance.new("Part",workspace)
-	wait(0.5)
-	Visualize.Color = Color3.new(0, 0, 0)
-	Visualize.Material = Enum.Material.ForceField
-	Visualize.Transparency = 0.5
-	Visualize.Anchored = true
-	Visualize.CanCollide = false
-	Visualize.CastShadow = false
-	Visualize.Shape = Enum.PartType.Ball
-	Visualize.Size = Vector3.new(30,30,30)
-	Visualize1.Color = Color3.new(1, 0, 0)
-	Visualize1.Material = Enum.Material.ForceField
-	Visualize1.Transparency = 0.5
-	Visualize1.Anchored = true
-	Visualize1.CanCollide = false
-	Visualize1.CastShadow = false
-	Visualize1.Shape = Enum.PartType.Ball
-	Visualize1.Size =
-Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
-
-	local Highlight1 = Instance.new("Highlight")
-	Highlight1.Parent = Visualize1
-	Highlight1.Enabled = true
-	Highlight1.FillTransparency = 0
-	Highlight1.OutlineColor = Color3.new(1, 1, 1)
-	local Highlight = Instance.new("Highlight")
-	Highlight.Parent = Visualize
-	Highlight.Enabled = true
-	Highlight.FillTransparency = 0
-	Highlight.OutlineColor = Color3.new(1, 1, 1)
-	
-task.spawn(function()
-visualizervar = RunService.RenderStepped:Connect(function()
-		if getgenv().visualize_Enabled then
-			Visualize.Transparency = 0
-			Visualize.Material = Enum.Material.ForceField
-			Visualize.Size = Vector3.new(ball_properties.parry_range, ball_properties.parry_range, ball_properties.parry_range)
-			Visualize.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
-			Visualize1.Transparency = 0
-			Visualize1.Material = Enum.Material.ForceField
-			Visualize1.Size = Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
-			Visualize1.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
-		else
-			Visualize.Material = Enum.Material.ForceField
-			Visualize.Transparency = 1
-			Visualize1.Material = Enum.Material.ForceField
-			Visualize1.Transparency = 1
-		end	
-	end)
-end)
 
 function create_animation(object: Instance, info: TweenInfo, value: table)
 	local animation = TweenService:Create(object, info, value)
