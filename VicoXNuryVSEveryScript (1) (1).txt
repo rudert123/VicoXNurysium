@@ -307,6 +307,60 @@ AutoParry.entity_properties = {
 	dot = 0
 }
 
+local self = AutoParry.get_ball()
+	wait(0.1)
+	local Visualize = Instance.new("Part",workspace)
+	local Visualize1 = Instance.new("Part",workspace)
+	wait(0.5)
+	Visualize.Color = Color3.new(0, 0, 0)
+	Visualize.Material = Enum.Material.ForceField
+	Visualize.Transparency = 0.5
+	Visualize.Anchored = true
+	Visualize.CanCollide = false
+	Visualize.CastShadow = false
+	Visualize.Shape = Enum.PartType.Ball
+	Visualize.Size = Vector3.new(30,30,30)
+	Visualize1.Color = Color3.new(1, 0, 0)
+	Visualize1.Material = Enum.Material.ForceField
+	Visualize1.Transparency = 0.5
+	Visualize1.Anchored = true
+	Visualize1.CanCollide = false
+	Visualize1.CastShadow = false
+	Visualize1.Shape = Enum.PartType.Ball
+	Visualize1.Size =
+Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
+
+	local Highlight1 = Instance.new("Highlight")
+	Highlight1.Parent = Visualize1
+	Highlight1.Enabled = true
+	Highlight1.FillTransparency = 0
+	Highlight1.OutlineColor = Color3.new(1, 1, 1)
+	local Highlight = Instance.new("Highlight")
+	Highlight.Parent = Visualize
+	Highlight.Enabled = true
+	Highlight.FillTransparency = 0
+	Highlight.OutlineColor = Color3.new(1, 1, 1)
+	
+task.spawn(function()
+visualizervar = RunService.RenderStepped:Connect(function()
+		if getgenv().visualize_Enabled then
+			Visualize.Transparency = 0
+			Visualize.Material = Enum.Material.ForceField
+			Visualize.Size = Vector3.new(ball_properties.parry_range, ball_properties.parry_range, ball_properties.parry_range)
+			Visualize.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
+			Visualize1.Transparency = 0
+			Visualize1.Material = Enum.Material.ForceField
+			Visualize1.Size = Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
+			Visualize1.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
+		else
+			Visualize.Material = Enum.Material.ForceField
+			Visualize.Transparency = 1
+			Visualize1.Material = Enum.Material.ForceField
+			Visualize1.Transparency = 1
+		end	
+	end)
+end)
+
 function create_animation(object: Instance, info: TweenInfo, value: table)
 	local animation = TweenService:Create(object, info, value)
 
@@ -1106,60 +1160,6 @@ if not auto_parry_enabled then
 			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
 
 		ball_properties.cooldown = false
-	end)
-end)
-
-local self = AutoParry.get_ball()
-	wait(0.1)
-	local Visualize = Instance.new("Part",workspace)
-	local Visualize1 = Instance.new("Part",workspace)
-	wait(0.5)
-	Visualize.Color = Color3.new(0, 0, 0)
-	Visualize.Material = Enum.Material.ForceField
-	Visualize.Transparency = 0.5
-	Visualize.Anchored = true
-	Visualize.CanCollide = false
-	Visualize.CastShadow = false
-	Visualize.Shape = Enum.PartType.Ball
-	Visualize.Size = Vector3.new(30,30,30)
-	Visualize1.Color = Color3.new(1, 0, 0)
-	Visualize1.Material = Enum.Material.ForceField
-	Visualize1.Transparency = 0.5
-	Visualize1.Anchored = true
-	Visualize1.CanCollide = false
-	Visualize1.CastShadow = false
-	Visualize1.Shape = Enum.PartType.Ball
-	Visualize1.Size =
-Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
-
-	local Highlight1 = Instance.new("Highlight")
-	Highlight1.Parent = Visualize1
-	Highlight1.Enabled = true
-	Highlight1.FillTransparency = 0
-	Highlight1.OutlineColor = Color3.new(1, 1, 1)
-	local Highlight = Instance.new("Highlight")
-	Highlight.Parent = Visualize
-	Highlight.Enabled = true
-	Highlight.FillTransparency = 0
-	Highlight.OutlineColor = Color3.new(1, 1, 1)
-	
-task.spawn(function()
-visualizervar = RunService.RenderStepped:Connect(function()
-		if getgenv().visualize_Enabled then
-			Visualize.Transparency = 0
-			Visualize.Material = Enum.Material.ForceField
-			Visualize.Size = Vector3.new(ball_properties.parry_range, ball_properties.parry_range, ball_properties.parry_range)
-			Visualize.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
-			Visualize1.Transparency = 0
-			Visualize1.Material = Enum.Material.ForceField
-			Visualize1.Size = Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
-			Visualize1.CFrame = CFrame.new(local_player.Character.PrimaryPart.Position)
-		else
-			Visualize.Material = Enum.Material.ForceField
-			Visualize.Transparency = 1
-			Visualize1.Material = Enum.Material.ForceField
-			Visualize1.Transparency = 1
-		end	
 	end)
 end)
 
