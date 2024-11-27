@@ -343,7 +343,7 @@ function World:get_pointer()
     return CFrame.lookAt(ray.Origin, ray.Origin + ray.Direction)
 end
 
-function AutoParry.FindTargetBall()
+function AutoParry.get_ball()
     -- Iterate through all children under the "Balls" folder in the workspace
     for _, ball in pairs(workspace:WaitForChild("Balls"):GetChildren()) do
         -- Check if the object is a BasePart and has the "realBall" attribute set to true
@@ -427,7 +427,7 @@ local platform = game:GetService("UserInputService").TouchEnabled and "Android" 
 
 print("Platform detected:", platform)
 
-function AutoParry.get_parry_remote()
+function resolve_parry_Remote()
     while true do
         local found = false
         -- Gunakan `game:GetDescendants()` untuk mencari di seluruh game
@@ -446,12 +446,12 @@ function AutoParry.get_parry_remote()
         wait(0.1) -- Interval pencarian
     end
 
-    if not parry_remote then
+    if not AutoParry.ball.properties.parry_remote then
         warn("RemoteEvent could not be found. Please check if the RemoteEvent exists!")
     end
 end
 
-AutoParry.get_parry_remote()
+resolve_parry_Remote()
 
 function AutoParry.perform_grab_animation()
 	local animation = ReplicatedStorage.Shared.SwordAPI.Collection.Default:FindFirstChild('GrabParry')
