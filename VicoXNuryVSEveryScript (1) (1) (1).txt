@@ -245,7 +245,7 @@ AutoParry.target = {
     aim = nil,
 }
 
-AutoParry.current.from.aim = {
+AutoParry.aim = {
     Name = nil,
 }
 
