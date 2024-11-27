@@ -828,7 +828,7 @@ RunService.PreSimulation:Connect(function()
 	local player_properties = Player.Entity.properties
 
 	player_properties.sword = character:GetAttribute('CurrentlyEquippedSword')
-    player_properties.ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
+    player_properties.ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue()
     player_properties.velocity = character.PrimaryPart.AssemblyLinearVelocity
     player_properties.speed = Player.Entity.properties.velocity.Magnitude
     player_properties.is_moving = Player.Entity.properties.speed > 30
