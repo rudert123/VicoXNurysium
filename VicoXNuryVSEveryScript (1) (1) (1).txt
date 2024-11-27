@@ -178,15 +178,36 @@ local Dead = workspace.Dead
 local AutoParry = {
 	ball = nil,
 	target = nil,
-	entity_properties = nil
+	entity_properties = nil,
 }
 
+-- Menambahkan fungsi send_to_server
+function AutoParry.send_to_server(data)
+    -- Pastikan parameter yang dibutuhkan tersedia
+    if not data or not data.speed or not data.distance or not data.ping then
+        warn("AutoParry.send_to_server: Data tidak lengkap.")
+        return
+    end
+
+    -- Implementasi RemoteEvent untuk komunikasi server
+    if AutoParry.ball.properties.parry_remote then
+        AutoParry.ball.properties.parry_remote:FireServer({
+            speed = data.speed,
+            distance = data.distance,
+            ping = data.ping,
+        })
+    else
+        warn("AutoParry.send_to_server: Parry remote tidak tersedia.")
+    end
+end
+
+-- Deklarasi Player
 local Player = {
 	Entity = nil,
 
 	properties = {
-		grab_animation = nil
-	}
+		grab_animation = nil,
+	},
 }
 
 Player.Entity = {
@@ -197,12 +218,11 @@ Player.Entity = {
 		position = Vector3.zero,
         is_moving = false,
 		speed = 0,
-		ping = 0
-    }
+		ping = 0,
+    },
 }
 
-local World = {}
-
+-- Deklarasi AutoParry.ball
 AutoParry.ball = {
 	training_ball_entity = nil,
 	client_ball_entity = nil,
@@ -215,7 +235,7 @@ AutoParry.ball = {
 		rotation = Vector3.zero,
 		position = Vector3.zero,
 		last_warping = tick(),
-        parry_remote = nil,
+        parry_remote = nil, -- RemoteEvent yang digunakan untuk FireServer
 		is_curved = false,
 		last_tick = tick(),
         auto_spam = false,
@@ -233,16 +253,18 @@ AutoParry.ball = {
 		lerp_radians = 0,
 		radians = 0,
 		speed = 0,
-		dot = 0
-    }
+		dot = 0,
+    },
 }
 
+-- Deklarasi AutoParry.target
 AutoParry.target = {
     current = nil,
     from = nil,
     aim = nil,
 }
 
+-- Deklarasi AutoParry.entity_properties
 AutoParry.entity_properties = {
     server_position = Vector3.zero,
 	velocity = Vector3.zero,
@@ -250,7 +272,7 @@ AutoParry.entity_properties = {
 	direction = 0,
 	distance = 0,
 	speed = 0,
-	dot = 0
+	dot = 0,
 }
 
 function create_animation(object: Instance, info: TweenInfo, value: table)
@@ -950,109 +972,129 @@ ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function(slash: 
 end)
 
 ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
-	local auto_parry_enabled = interface.flags['auto_parry']
-
-if not auto_parry_enabled then
-		AutoParry.reset()
+    -- Periksa apakah Auto Parry diaktifkan
+    local auto_parry_enabled = interface.flags['auto_parry']
+    if not auto_parry_enabled then
+        AutoParry.reset()
         return
     end
 
-	local Character = LocalPlayer.Character
-
-	if not Character then
-		return
-	end
-
-    if Character.Parent == Dead then
-		AutoParry.reset()
-		
+    -- Pastikan karakter pemain tersedia
+    local Character = LocalPlayer.Character
+    if not Character or Character.Parent == Dead then
+        AutoParry.reset()
         return
     end
 
+    -- Pastikan ada ball entity
     if not AutoParry.ball.ball_entity then
         return
     end
 
-	local ball_properties = AutoParry.ball.properties
+    -- Properti bola
+    local ball_properties = AutoParry.ball.properties
+    ball_properties.is_curved = AutoParry.is_curved()
 
-	ball_properties.is_curved = AutoParry.is_curved()
-	
-	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
-	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
-	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
+    -- Hitung nilai berdasarkan ping
+    local ping = math.clamp(Player.Entity.properties.ping, 30, 150) -- Batasi ping antara 30-150ms
+    local ping_threshold = math.clamp(ping / 10, 10, 16)
+    local spam_accuracy = ball_properties.maximum_speed / 7 + ping_threshold
+    local parry_accuracy = ball_properties.maximum_speed / 11.5 + ping_threshold
 
-	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
-ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
+    -- Hitung range
+    ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
+    ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
 
-	if Player.Entity.properties.sword == 'Titan Blade' then
-		ball_properties.parry_range += 11
-		ball_properties.spam_range += 2
-	end	
+    -- Adjustments untuk Titan Blade
+    if Player.Entity.properties.sword == 'Titan Blade' then
+        ball_properties.parry_range += 11
+        ball_properties.spam_range += 2
+    end
 
-	local distance_to_last_position = LocalPlayer:DistanceFromCharacter(ball_properties.last_position)
+    -- Jarak dari posisi terakhir
+    local distance_to_last_position = LocalPlayer:DistanceFromCharacter(ball_properties.last_position)
 
-	if ball_properties.auto_spam and AutoParry.target.current then
-		ball_properties.auto_spam = AutoParry.is_spam({
-			speed = ball_properties.speed,
-			spam_accuracy = spam_accuracity,
-			parries = ball_properties.parries,
-			ball_speed = ball_properties.speed,
-			range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
-			last_hit = ball_properties.last_hit,
-			ball_distance = ball_properties.distance,
-			maximum_speed = ball_properties.maximum_speed,
-			old_speed = AutoParry.ball.properties.old_speed,
-			entity_distance = AutoParry.entity_properties.distance,
-			last_position_distance = distance_to_last_position,
-		})
-	end
+    -- Auto Spam Check
+    if ball_properties.auto_spam and AutoParry.target.current then
+        ball_properties.auto_spam = AutoParry.is_spam({
+            speed = ball_properties.speed,
+            spam_accuracy = spam_accuracy,
+            parries = ball_properties.parries,
+            ball_speed = ball_properties.speed,
+            range = ball_properties.spam_range / (3.15 - ping_threshold / 10),
+            last_hit = ball_properties.last_hit,
+            ball_distance = ball_properties.distance,
+            maximum_speed = ball_properties.maximum_speed,
+            old_speed = AutoParry.ball.properties.old_speed,
+            entity_distance = AutoParry.entity_properties.distance,
+            last_position_distance = distance_to_last_position,
+        })
+    end
 
-	if ball_properties.auto_spam then
+    if ball_properties.auto_spam then
         return
     end
 
-	if AutoParry.target.current and AutoParry.target.current.Name == LocalPlayer.Name then
-		ball_properties.auto_spam = AutoParry.is_spam({
-			speed = ball_properties.speed,
-			spam_accuracy = spam_accuracity,
-			parries = ball_properties.parries,
-			ball_speed = ball_properties.speed,
-			range = ball_properties.spam_range,
-			last_hit = ball_properties.last_hit,
-			ball_distance = ball_properties.distance,
-			maximum_speed = ball_properties.maximum_speed,
-			old_speed = AutoParry.ball.properties.old_speed,
-			entity_distance = AutoParry.entity_properties.distance,
-			last_position_distance = distance_to_last_position,
-		})
-	end
-
-	if ball_properties.auto_spam then
-        return
+    -- Cek target
+    if AutoParry.target.current and AutoParry.target.current.Name == LocalPlayer.Name then
+        ball_properties.auto_spam = AutoParry.is_spam({
+            speed = ball_properties.speed,
+            spam_accuracy = spam_accuracy,
+            parries = ball_properties.parries,
+            ball_speed = ball_properties.speed,
+            range = ball_properties.spam_range,
+            last_hit = ball_properties.last_hit,
+            ball_distance = ball_properties.distance,
+            maximum_speed = ball_properties.maximum_speed,
+            old_speed = AutoParry.ball.properties.old_speed,
+            entity_distance = AutoParry.entity_properties.distance,
+            last_position_distance = distance_to_last_position,
+        })
     end
-	
-	if ball_properties.is_curved then
+
+    if ball_properties.auto_spam then
         return
     end
 
-	if ball_properties.distance > ball_properties.parry_range and ball_properties.distance > parry_accuracity then
-        return
-    end
-	
-	if AutoParry.target.current and AutoParry.target.current ~= LocalPlayer.Character then
+    -- Abaikan jika bola melengkung
+    if ball_properties.is_curved then
         return
     end
 
-	AutoParry.perform_parry()
+    -- Periksa jarak bola
+    if ball_properties.distance > ball_properties.parry_range and ball_properties.distance > parry_accuracy then
+        return
+    end
 
-	task.spawn(function()
-		repeat
-			RunService.PreSimulation:Wait(0)
-		until 
-			(tick() - ball_properties.last_hit) > 1 - (ping_threshold / 100)
+    -- Pastikan target adalah pemain lokal
+    if AutoParry.target.current and AutoParry.target.current ~= LocalPlayer.Character then
+        return
+    end
 
-		ball_properties.cooldown = false
-	end)
+    -- Performa Auto Parry
+    AutoParry.perform_parry()
+
+    -- Cooldown Handling
+    task.spawn(function()
+        local start_time = tick()
+        repeat
+            task.wait(0.01)
+        until (tick() - start_time) > 1 - (ping_threshold / 100)
+
+        ball_properties.cooldown = false
+    end)
+
+    -- Server Fallback jika ping tinggi
+    if ping > 100 then
+        task.defer(function()
+            -- Kirim data ke server untuk parry
+            AutoParry.send_to_server({
+                speed = ball_properties.speed,
+                distance = ball_properties.distance,
+                ping = ping,
+            })
+        end)
+    end
 end)
 
 task.defer(function()
