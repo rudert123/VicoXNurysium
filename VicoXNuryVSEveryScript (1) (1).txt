@@ -1146,7 +1146,7 @@ task.delay(30, function()
         return
     end
 
-local self = parry_helper.FindTargetBall()
+local self = AutoParry.get_ball()
 	wait(0.1)
 	local Visualize = Instance.new("Part",workspace)
 	local Visualize1 = Instance.new("Part",workspace)
@@ -1198,6 +1198,8 @@ visualizervar = RunService.RenderStepped:Connect(function()
 		end	
 	end)
 end)
+
+print("All Done Initializazion:", platform)
 
 local NothingLibrary = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/3345-c-a-t-s-u-s/NOTHING/main/source.lua'))();
 
