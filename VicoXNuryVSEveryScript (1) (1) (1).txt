@@ -981,8 +981,8 @@ if not auto_parry_enabled then
 	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
-	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.3
-    ball_properties.parry_range = ping_threshold + ball_properties.speed / math.pi
+	ball_properties.spam_range = ping_threshold + ball_properties.speed / 2.6
+ball_properties.parry_range = ping_threshold + math.abs(ball_properties.speed) / math.pi + math.sqrt(ping_threshold / 1000)
 
 	if Player.Entity.properties.sword == 'Titan Blade' then
 		ball_properties.parry_range += 11
@@ -1102,7 +1102,7 @@ local notify = NothingLibrary.Notification();
 	local player_ping = Player.Entity.properties.ping
 
 -- Cek koneksi pemain dan tampilkan notifikasi sesuai dengan ping
-if player_ping > 100 and player_ping < 200 then
+if player_ping > 350 and player_ping < 400 then
     notify.new({
         Title = "[Warning]",
         Description = "Low connection speed, delays may occur.",
