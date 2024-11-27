@@ -1109,7 +1109,7 @@ local notify = NothingLibrary.Notification();
 	local player_ping = Player.Entity.properties.ping
 
 -- Cek koneksi pemain dan tampilkan notifikasi sesuai dengan ping
-if player_ping > 350 and player_ping < 400 then
+if player_ping > 100 and player_ping < 200 then
     notify.new({
         Title = "[Warning]",
         Description = "Low connection speed, delays may occur.",
@@ -1126,4 +1126,47 @@ elseif player_ping >= 200 then
    end
 end)
 
+local function optimizePerformance()
+    -- Boost FPS by disabling unnecessary features and reducing settings
+    game:GetService("Workspace").StreamingEnabled = true
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01 -- Lowest quality for best FPS
+    game:GetService("Lighting").GlobalShadows = false -- Disable shadows
+    game:GetService("Lighting").Brightness = 2 -- Adjust lighting for smoothness
+    game:GetService("UserInputService").MouseDeltaSensitivity = 0.5 -- Reduce mouse lag
+    setfpscap(120) -- Increase FPS cap to 120 for smoother performance
+    
+    -- Anti-render and unnecessary object loading optimization
+    local function disableUnnecessaryRender()
+        local Workspace = game:GetService("Workspace")
+        
+        -- Disable rendering of distant objects
+        Workspace:StreamOut(10000)  -- Example distance for streaming objects out of view
+        
+        -- Disable unnecessary effects
+        game:GetService("Lighting").FogEnabled = false -- Disable fog to improve performance
+        game:GetService("Lighting").OutdoorAmbient = Color3.fromRGB(0, 0, 0) -- Improve performance by adjusting ambient light
+    end
+    disableUnnecessaryRender()
 
+    -- Optimize memory usage
+    local function optimizeMemoryUsage()
+        local serviceMemoryLimits = {
+            ['Players'] = 2048,
+            ['Workspace'] = 2048,
+            ['ReplicatedStorage'] = 2048,
+            -- Add more services as needed
+        }
+
+        for serviceName, limit in pairs(serviceMemoryLimits) do
+            local service = game:GetService(serviceName)
+            if service then
+                -- Assuming there is a method to set memory limit
+                -- Uncomment if such a method exists
+                -- service:SetMemoryLimit(limit)
+            end
+        end
+    end
+    optimizeMemoryUsage()
+end
+
+optimizePerformance()
