@@ -1139,8 +1139,11 @@ local function optimizePerformance()
     local function disableUnnecessaryRender()
         local Workspace = game:GetService("Workspace")
         
-        -- Disable rendering of distant objects
-        Workspace:StreamOut(10000)  -- Example distance for streaming objects out of view
+        -- Set the Streaming to manage distant objects loading
+        Workspace.StreamingEnabled = true
+        
+        -- Set the StreamedInDistance to control how far objects are loaded
+        Workspace:SetAttribute("StreamedInDistance", 1000)  -- Adjust the distance as needed for your game
         
         -- Disable unnecessary effects
         game:GetService("Lighting").FogEnabled = false -- Disable fog to improve performance
