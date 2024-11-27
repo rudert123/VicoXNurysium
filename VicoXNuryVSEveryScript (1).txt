@@ -334,8 +334,6 @@ local function linear_predict(a: any, b: any, time_volume: number)
     return a + (b - a) * time_volume
 end
 
-
-
 function World:get_pointer()
     local mouse_location = UserInputService:GetMouseLocation()
     local ray = workspace.CurrentCamera:ScreenPointToRay(mouse_location.X, mouse_location.Y, 0)
@@ -500,124 +498,74 @@ function AutoParry.perform_grab_animation()
 end
 
 function AutoParry.perform_parry()
-    -- Mendapatkan properti bola dari AutoParry
-    local ball_properties = AutoParry.ball.properties
+	local ball_properties = AutoParry.ball.properties
+	
+	if ball_properties.cooldown and not ball_properties.auto_spam then
+		return
+	end
 
-    -- Debug: Status cooldown dan auto spam
-    print("Cooldown status:", ball_properties.cooldown)
-    print("Auto spam status:", ball_properties.auto_spam)
+	ball_properties.parries += 1
+	AutoParry.ball.properties.last_hit = tick()
 
-    -- Jika cooldown aktif dan bukan auto spam, hentikan fungsi
-    if ball_properties.cooldown and not ball_properties.auto_spam then
-        print("Cooldown aktif, tidak melakukan parry.")
-        return
-    end
-
-    -- Menambahkan jumlah parries dan menyimpan waktu parry terakhir
-    ball_properties.parries += 1
-    AutoParry.ball.properties.last_hit = tick()
-
-    -- Debug: Waktu parry terakhir
-    print("Last hit time:", ball_properties.last_hit)
-
-    -- Mendapatkan informasi kamera
-    local camera = workspace.CurrentCamera
-    local camera_direction = camera.CFrame.Position
-
-    -- Debug: Posisi kamera
-    print("Camera position:", camera_direction)
-
-    -- Mendefinisikan arah awal
-    local direction = camera.CFrame
-    local target_position = AutoParry.entity_properties.server_position
-
-    -- Debug: Posisi target
-    print("Target position:", target_position)
-
-    -- Mendapatkan jenis curve dari properti bola
-    local current_curve = ball_properties.curve_type -- Pastikan variabel ini diatur sebelumnya.
-
-    -- Debug: Tipe curve saat ini
-    print("Current curve type:", current_curve)
-
-    -- Jika bola tidak dalam mode auto spam
+	local camera = workspace.CurrentCamera
+	local camera_direction = camera.CFrame.Position
+	
+	local direction = camera.CFrame
+	local target_position = AutoParry.entity_properties.server_position
+	
     if not ball_properties.auto_spam then
-        -- Menjalankan animasi grab
-        AutoParry.perform_grab_animation()
+		AutoParry.perform_grab_animation()
 
-        -- Mengatur cooldown menjadi true
-        ball_properties.cooldown = true
+		ball_properties.cooldown = true
+	
+		local current_curve = interface.flags['curve_method']
 
-        -- Menyesuaikan arah berdasarkan jenis curve
-        if current_curve == 'Linear' then
-            -- Linear: Mengarahkan ke target secara langsung
-            direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, target_position)
-            print("Linear curve direction set.")
-        elseif current_curve == 'Backwards' then
-            -- Backwards: Membalik arah dari kamera
-            direction = CFrame.new(camera_direction, (camera_direction + (-camera.CFrame.LookVector * 10000)) + Vector3.new(0, 1000, 0))
-            print("Backwards curve direction set.")
-        elseif current_curve == 'Random' then
-            -- Random: Mengarahkan ke posisi acak
-            direction = CFrame.new(
-                LocalPlayer.Character.PrimaryPart.Position,
-                Vector3.new(math.random(-1000, 1000), math.random(-350, 1000), math.random(-1000, 1000))
-            )
-            print("Random curve direction set.")
-        elseif current_curve == 'Accelerated' then
-            -- Accelerated: Mengarahkan ke target dengan offset vertikal
-            direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, target_position + Vector3.new(0, 150, 0))
-            print("Accelerated curve direction set.")
-        else
-            -- Debug: Jika tipe curve tidak dikenali
-            print("Unknown curve type, direction not modified.")
-        end
-    else
-        -- Jika dalam mode auto spam
-        direction = CFrame.new(camera_direction, target_position + Vector3.new(0, 60, 0))
-        print("Auto spam mode direction set.")
+		if current_curve == 'Linear' then
+			direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, target_position)
+		end
 
-        -- Mengirimkan perintah FireServer untuk auto spam
-        ball_properties.parry_remote:FireServer(
-            0,
-            direction,
-            { [AutoParry.target.aim.Name] = target_position },
-            { target_position.X, target_position.Y },
-            false
-        )
+		if current_curve == 'Backwards' then
+			direction = CFrame.new(camera_direction, (camera_direction + (-camera.CFrame.LookVector * 10000)) + Vector3.new(0, 1000, 0))
+		end
+	
+		if current_curve == 'Random' then
+			direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, Vector3.new(math.random(-1000, 1000), math.random(-350, 1000), math.random(-1000, 1000)))
+		end
+	
+		if current_curve == 'Accelerated' then
+			direction = CFrame.new(LocalPlayer.Character.PrimaryPart.Position, target_position + Vector3.new(0, 150, 0))
+		end
+	else
+		direction = CFrame.new(camera_direction, target_position + Vector3.new(0, 60, 0))
 
-        -- Debug: Remote FireServer berhasil dijalankan untuk auto spam
-        print("Parry remote fired for auto spam.")
+		ball_properties.parry_remote:FireServer(
+			0,
+			direction,
+			{ [AutoParry.target.aim.Name] = target_position },
+			{ target_position.X, target_position.Y },
+			false
+		)
+	
+		task.delay(0.25, function()
+			if ball_properties.parries > 0 then
+				ball_properties.parries -= 1
+			end
+		end)
 
-        -- Mengurangi jumlah parries setelah jeda waktu
-        task.delay(0.25, function()
-            if ball_properties.parries > 0 then
-                ball_properties.parries -= 1
-                print("Parries decremented after delay. Current parries:", ball_properties.parries)
-            end
-        end)
+		return
+	end
 
-        -- Mengakhiri fungsi jika auto spam aktif
-        return
-    end
+	ball_properties.parry_remote:FireServer(
+		0.5,
+		direction,
+		{ [AutoParry.target.aim.Name] = target_position },
+		{ target_position.X, target_position.Y },
+		false
+	)
 
-    -- Mengirimkan perintah FireServer untuk parry normal
-    ball_properties.parry_remote:FireServer(
-        0,
-        direction,
-        { [AutoParry.target.aim.Name] = target_position },
-        { target_position.X, target_position.Y },
-        false
-    )
-
-    -- Debug: Remote FireServer berhasil dijalankan untuk parry
-    print("Parry remote fired for normal parry.")
-
-    -- Mengurangi jumlah parries setelah jeda waktu
-    task.delay(0.15, function()
+    task.delay(0.25, function()
         if ball_properties.parries > 0 then
             ball_properties.parries -= 1
-            print("Parries decremented after delay. Current parries:", ball_properties.parries)
         end
     end)
 end
@@ -955,6 +903,8 @@ RunService.PreSimulation:Connect(function()
     AutoParry.entity_properties.is_moving = target_velocity.Magnitude > 0.1
     AutoParry.entity_properties.dot = AutoParry.entity_properties.is_moving and math.max(AutoParry.entity_properties.direction:Dot(target_velocity.Unit), 0)
 end)
+
+local LocalPlayer = Players.LocalPlayer
 
 local is_respawned = false :: boolean
 
