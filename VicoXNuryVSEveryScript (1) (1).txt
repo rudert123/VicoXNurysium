@@ -193,9 +193,8 @@ LocalPlayer.Idled:Connect(function()
     VirtualUser:ClickButton2(Vector2.zero)
 end)
 
-setfpscap(200)
-
 local LocalPlayer = Players.LocalPlayer
+
 local client_id = RbxAnalyticsService:GetClientId()
 
 local names_map = {
@@ -375,8 +374,10 @@ function AutoParry.get_ball()
 end
 
 function AutoParry.get_client_ball()
-    for _, ball in workspace.Balls:GetChildren() do
-        if not ball:GetAttribute("realBall") then
+    -- Iterate through all children under the "Balls" folder in the workspace
+    for _, ball in pairs(workspace:WaitForChild("Balls"):GetChildren()) do
+        -- Check if the object is a BasePart and has the "realBall" attribute set to true
+        if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
             return ball
         end
     end
@@ -562,7 +563,7 @@ function AutoParry.perform_parry()
 		direction = CFrame.new(camera_direction, target_position + Vector3.new(0, 60, 0))
 
 		ball_properties.parry_remote:FireServer(
-			0,
+			0.5,
 			direction,
 			{ [AutoParry.target.aim.Name] = target_position },
 			{ target_position.X, target_position.Y },
@@ -1166,7 +1167,8 @@ local self = AutoParry.get_ball()
 	Visualize1.CanCollide = false
 	Visualize1.CastShadow = false
 	Visualize1.Shape = Enum.PartType.Ball
-	Visualize1.Size = Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
+	Visualize1.Size =
+Vector3.new(ball_properties.spam_range, ball_properties.spam_range, ball_properties.spam_range)
 
 	local Highlight1 = Instance.new("Highlight")
 	Highlight1.Parent = Visualize1
