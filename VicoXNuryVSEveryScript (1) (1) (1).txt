@@ -174,12 +174,9 @@ local interface = loadstring(game:HttpGet('https://raw.githubusercontent.com/fle
 local assets = game:GetObjects('rbxassetid://98657300657778')[1]
 
 assets.Parent = RobloxReplicatedStorage
-assets.Name = names_map['protected']
 
-local effects_folder = assets.effects
 local objects_folder = assets.objects
 local sounds_folder = assets.sounds
-local gui_folder = assets.gui
 
 local watermark_asset = gui_folder.watermark
 local watermark = watermark_asset:Clone()
