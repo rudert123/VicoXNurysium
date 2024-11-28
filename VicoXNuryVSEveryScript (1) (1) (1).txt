@@ -166,6 +166,9 @@ LocalPlayer.Idled:Connect(function()
     VirtualUser:ClickButton2(Vector2.zero)
 end)
 
+local interface = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/EvadeAutoBHOP/main/libs/ef.java'))()
+
+
 local LocalPlayer = Players.LocalPlayer
 
 local RunTime = workspace.Runtime
