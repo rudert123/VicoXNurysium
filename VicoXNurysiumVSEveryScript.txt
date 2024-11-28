@@ -982,8 +982,7 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 
 	ball_properties.is_curved = AutoParry.is_curved()
 	
-	local pingTake = Player.Entity.properties.ping
-local ping_threshold = math.clamp(math.sqrt(pingTake) * 1.5, 9, 18)
+	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, math.min(16, Player.Entity.properties.ping / 5))
 
 	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
