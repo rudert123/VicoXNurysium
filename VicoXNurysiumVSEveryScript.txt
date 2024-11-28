@@ -108,7 +108,6 @@ local AutoParry = {
 	target = nil,
 	entity_properties = nil,
 }
--- Deklarasi Player
 local Player = {
 	Entity = nil,
 
@@ -131,7 +130,6 @@ Player.Entity = {
 
 local World = {}
 
--- Deklarasi AutoParry.ball
 AutoParry.ball = {
 	training_ball_entity = nil,
 	client_ball_entity = nil,
@@ -144,7 +142,7 @@ AutoParry.ball = {
 		rotation = Vector3.zero,
 		position = Vector3.zero,
 		last_warping = tick(),
-        parry_remote = nil, -- RemoteEvent yang digunakan untuk FireServer
+        parry_remote = nil, 
 		is_curved = false,
 		last_tick = tick(),
         auto_spam = false,
@@ -166,7 +164,6 @@ AutoParry.ball = {
     },
 }
 
--- Deklarasi AutoParry.target
 AutoParry.target = {
     current = nil,
     from = nil,
@@ -177,7 +174,6 @@ AutoParry.aim = {
     Name = nil,
 }
 
--- Deklarasi AutoParry.entity_properties
 AutoParry.entity_properties = {
     server_position = Vector3.zero,
 	velocity = Vector3.zero,
@@ -245,7 +241,6 @@ function World:get_pointer()
 end
 
 function AutoParry.get_ball()
-    -- Iterate through all children under the "Balls" folder in the workspace
     for _, ball in pairs(workspace:WaitForChild("Balls"):GetChildren()) do
         -- Check if the object is a BasePart and has the "realBall" attribute set to true
         if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
@@ -255,7 +250,6 @@ function AutoParry.get_ball()
 end
 
 function AutoParry.get_client_ball()
-    -- Iterate through all children under the "Balls" folder in the workspace
     for _, ball in pairs(workspace:WaitForChild("Balls"):GetChildren()) do
         -- Check if the object is a BasePart and has the "realBall" attribute set to true
         if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
@@ -927,7 +921,7 @@ workspace.Balls.ChildAdded:Connect(function()
 	
 		ball_properties.parries += 1
 	
-		task.delay(0.25, function()
+		task.delay(0.195, function()
 			if ball_properties.parries > 0 then
 				ball_properties.parries -= 1
 			end
@@ -988,7 +982,9 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 
 	ball_properties.is_curved = AutoParry.is_curved()
 	
-	local ping_threshold = math.clamp(Player.Entity.properties.ping / 10, 10, 16)
+	local ping = Player.Entity.properties.ping
+local ping_threshold = math.clamp(math.sqrt(ping) * 1.5, 9, 18)
+
 	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
 
@@ -1140,18 +1136,15 @@ local function optimizePerformance()
     game:GetService("UserInputService").MouseDeltaSensitivity = 0.5 -- Reduce mouse lag
     setfpscap(60) -- Increase FPS cap to 120 for smoother performance
 
-    -- Anti-render and unnecessary object loading optimization
+loading optimization
     local function disableUnnecessaryRender()
         local Workspace = game:GetService("Workspace")
         
-        -- Set the Streaming to manage distant objects loading
-        Workspace.StreamingEnabled = true
         
-        -- Set the StreamedInDistance to control how far objects are loaded
-        -- Example distance can be adjusted based on your game's needs
-        Workspace:SetAttribute("StreamedInDistance", 1000)  -- Adjust the distance as needed for your game
+        Workspace.StreamingEnabled = true
 
-        -- Adjust the fog to reduce rendering load
+        Workspace:SetAttribute("StreamedInDistance", 1000) 
+
         local lighting = game:GetService("Lighting")
         lighting.FogStart = 10000  -- Set start distance for fog (far away to avoid impact)
         lighting.FogEnd = 20000    -- Set end distance for fog (far away to avoid impact)
