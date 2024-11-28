@@ -149,17 +149,6 @@ do
         end
     })
 
-    -- Dropdown for selecting curve method
-AutoSection:NewDropdown({
-    Title = "Curve Method",
-    Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
-    Default = "Linear",
-    Callback = function(value)
-        interface.flags['curve_method'] = value -- Memperbarui metode kurva
-        print("Selected Curve Method:", value)
-    end
-})
-
 -- Handling Idle state
 LocalPlayer.Idled:Connect(function()
     VirtualUser:CaptureController()
