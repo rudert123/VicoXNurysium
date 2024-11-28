@@ -95,81 +95,6 @@ notify.new({
 	Icon = "rbxassetid://8997385628"
 })
 
-local Windows = NothingLibrary.new({
-	Title = "Vico - NeuX",
-	Description = "Vico - Blade Ball - Test",
-	Keybind = Enum.KeyCode.LeftControl,
-	Logo = 'http://www.roblox.com/asset/?id=18898582662'
-})
-
-local TabFrame = Windows:NewTab({
-	Title = "Main",
-	Description = "very cool and awesome",
-	Icon = "rbxassetid://7733960981"
-})
-
-
---// auto parry section
-
-do
-    local AutoSection = TabFrame:NewSection({
-        Title = "Parry",
-        Icon = "rbxassetid://7743869054",
-        Position = "Left"
-    })
-
-    AutoSection:NewToggle({
-		Title = "AutoParry",
-		Default = false,
-		Callback = function(state)
-                auto_parry_enabled = state
-	        print("Autoparry:", state)
-		end
-	})
-
-    -- Toggle for auto parry rotation
-    AutoSection:NewToggle({
-        Title = "Rotation",
-        Default = false,
-        Callback = function(state)
-        auto_parry_rotation_enabled = state
-            print("Auto Parry Rotation:", tr)
-        end
-    })
-
-    -- Slider for auto parry rotation acuity
-    AutoSection:NewSlider({
-        Title = "Acuity",
-        Min = 1,
-        Max = 10,
-        Default = 5,
-        Callback = function(value)
-            auto_parry_rotation_acuity_value = value
-            print("Auto Parry Rotation Acuity:", value)
-        end
-    })
-
-    -- Dropdown for selecting curve method
-    AutoSection:NewDropdown({
-        Title = "Curve Method",
-        Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
-        Default = "Linear",
-        Callback = function(value)
-            if not interface.flags then
-                interface.flags = {}
-            end
-            interface.flags['curve_method'] = value
-            print("Selected Curve Method:", value)
-        end
-    })
-end
-
--- Handling Idle state
-LocalPlayer.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.zero)
-end)
-
 local LocalPlayer = Players.LocalPlayer
 
 local interface = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/EvadeAutoBHOP/main/libs/ef.java'))()
@@ -1103,6 +1028,81 @@ task.delay(30, function()
 	if interface.disconnected then
         return
     end
+
+local Windows = NothingLibrary.new({
+	Title = "Vico - NeuX",
+	Description = "Vico - Blade Ball - Test",
+	Keybind = Enum.KeyCode.LeftControl,
+	Logo = 'http://www.roblox.com/asset/?id=18898582662'
+})
+
+local TabFrame = Windows:NewTab({
+	Title = "Main",
+	Description = "very cool and awesome",
+	Icon = "rbxassetid://7733960981"
+})
+
+
+--// auto parry section
+
+do
+    local AutoSection = TabFrame:NewSection({
+        Title = "Parry",
+        Icon = "rbxassetid://7743869054",
+        Position = "Left"
+    })
+
+    AutoSection:NewToggle({
+		Title = "AutoParry",
+		Default = false,
+		Callback = function(state)
+                auto_parry_enabled = state
+	        print("Autoparry:", state)
+		end
+	})
+
+    -- Toggle for auto parry rotation
+    AutoSection:NewToggle({
+        Title = "Rotation",
+        Default = false,
+        Callback = function(state)
+        auto_parry_rotation_enabled = state
+            print("Auto Parry Rotation:", tr)
+        end
+    })
+
+    -- Slider for auto parry rotation acuity
+    AutoSection:NewSlider({
+        Title = "Acuity",
+        Min = 1,
+        Max = 10,
+        Default = 5,
+        Callback = function(value)
+            auto_parry_rotation_acuity_value = value
+            print("Auto Parry Rotation Acuity:", value)
+        end
+    })
+
+    -- Dropdown for selecting curve method
+    AutoSection:NewDropdown({
+        Title = "Curve Method",
+        Data = {"Accelerated", "Backwards", "Linear", "Camera", "Random"},
+        Default = "Linear",
+        Callback = function(value)
+            if not interface.flags then
+                interface.flags = {}
+            end
+            interface.flags['curve_method'] = value
+            print("Selected Curve Method:", value)
+        end
+    })
+end
+
+-- Handling Idle state
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.zero)
+end)
 
 print("All Done Initializazion:", platform)
 
