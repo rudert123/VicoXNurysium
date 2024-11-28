@@ -921,7 +921,7 @@ workspace.Balls.ChildAdded:Connect(function()
 	
 		ball_properties.parries += 1
 	
-		task.delay(0.195, function()
+		task.delay(0.20, function()
 			if ball_properties.parries > 0 then
 				ball_properties.parries -= 1
 			end
@@ -982,8 +982,8 @@ ConnectionsManager['auto_parry'] = RunService.PostSimulation:Connect(function()
 
 	ball_properties.is_curved = AutoParry.is_curved()
 	
-	local ping = Player.Entity.properties.ping
-local ping_threshold = math.clamp(math.sqrt(ping) * 1.5, 9, 18)
+	local pingTake = Player.Entity.properties.ping
+local ping_threshold = math.clamp(math.sqrt(pingTake) * 1.5, 9, 18)
 
 	local spam_accuracity = ball_properties.maximum_speed / 7 + ping_threshold
 	local parry_accuracity = ball_properties.maximum_speed / 11.5 + ping_threshold
